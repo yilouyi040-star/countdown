@@ -295,9 +295,10 @@
     </style>
 </head>
 <body>
-    <video id="bg-music" playsinline>
-        <source src="4609915912343884169.mp4" type="video/mp4">
-    </video>
+    <audio id="bg-music" playsinline style="display:none">
+        <source src="intro.mp4" type="audio/mp4">
+        <source src="intro.mp3" type="audio/mpeg">
+    </audio>
 
     <div id="start-overlay">
         <button class="start-btn" onclick="startExperience()">Chạm vào đây nèee🧧</button>
@@ -370,24 +371,28 @@
             }
         };
 
-        // --- START LOGIC ---
+        // --- START LOGIC (SỬA LẠI LOGIC NHẠC) ---
         function startExperience() {
             document.getElementById('start-overlay').style.display = 'none';
             document.getElementById('calendar-container').style.display = 'block';
             AudioSys.init();
-            const music = document.getElementById('bg-music');
-            music.volume = 0; music.play().then(() => { music.pause(); music.currentTime = 0; music.volume = 1.0; }).catch(e=>{});
             
-            // --- XỬ LÝ CHUYỂN BÀI HÁT TỰ ĐỘNG ---
-            // Khi bài 1 kết thúc, tự động play bài Low G
-            music.addEventListener('ended', function() {
-                // Kiểm tra xem có đang ở bài đầu tiên không (bằng tên file hoặc đường dẫn)
-                if (this.currentSrc.indexOf("4609915912343884169.mp4") !== -1 || this.src.indexOf("4609915912343884169.mp4") !== -1) {
-                    this.src = "Low G  In Love (ft. JustaTee)  L2K The Album.mp3";
-                    this.play();
-                }
-            });
+            // XỬ LÝ NHẠC
+            const music = document.getElementById('bg-music');
+            music.volume = 1.0;
+            music.play().catch(e => console.log("Lỗi phát nhạc:", e));
 
+            // Tự động chuyển bài khi hết intro.mp4
+            music.onended = function() {
+                // Kiểm tra nếu đang chạy bài intro (intro.mp4)
+                if (this.currentSrc.includes("intro.mp4") || this.src.includes("intro.mp4")) {
+                    console.log("Hết intro, chuyển bài main...");
+                    this.src = "main.mp3"; // Chuyển sang main.mp3
+                    this.load();
+                    this.play().catch(e => console.log("Lỗi chuyển bài:", e));
+                }
+            };
+            
             initCalendar();
         }
 
@@ -439,7 +444,10 @@
             let count = 3;
 
             const music = document.getElementById('bg-music');
-            music.currentTime = 0; music.volume = 1.0; music.play().catch(e => console.log(e));
+            // Đảm bảo nhạc luôn chạy
+            if(music.paused) {
+                music.play().catch(e => console.log(e));
+            }
 
             function tick() {
                 if(count > 0) {
