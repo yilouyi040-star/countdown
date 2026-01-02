@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy New Year 2026 - For Quynh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;900&family=Dancing+Script:wght@700&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        /* --- CẤU HÌNH CHUNG --- */
+        body {
+            margin: 0; overflow: hidden;
+            background: #050505;
+            font-family: 'Montserrat', sans-serif;
+            height: 100vh; color: white;
+            user-select: none; -webkit-tap-highlight-color: transparent;
+            transition: background 1.5s ease;
+        }
+
+        /* --- SÂN KHẤU & ÁNH SÁNG --- */
+        #stage-lights {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 60%;
+            background: radial-gradient(circle at 20% 100%, rgba(255, 0, 100, 0.2), transparent 40%),
+                        radial-gradient(circle at 80% 100%, rgba(0, 100, 255, 0.2), transparent 40%);
+            z-index: 2; pointer-events: none;
+            animation: lightShift 4s infinite alternate;
+        }
+        @keyframes lightShift { 0% { opacity: 0.4; } 100% { opacity: 0.7; } }
+
+        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        canvas { display: block; }
+
+        /* --- MÀN HÌNH BẮT ĐẦU --- */
+        #start-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 999;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+            cursor: pointer;
+        }
+        .start-btn {
+            padding: 20px 50px; border: 2px solid gold; color: gold;
+            font-size: 1.5rem; text-transform: uppercase; letter-spacing: 2px;
+            background: transparent; border-radius: 50px;
+            animation: pulseBtn 1.5s infinite;
+        }
+        @keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
+
+        /* --- UI LỊCH (CALENDAR) --- */
+        #calendar-container {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 280px; height: 320px; z-index: 10;
+            perspective: 1000px; display: none;
+        }
+        .calendar-page {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; color: #333;
+            border-radius: 10px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transform-origin: top left; 
+            background-image: radial-gradient(#e0e0e0 15%, transparent 16%), radial-gradient(#e0e0e0 15%, transparent 16%);
+            background-size: 10px 10px; background-position: 0 0, 5px 5px;
+            overflow: hidden;
+            backface-visibility: hidden;
+        }
+        .calendar-page::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 40px;
+            background: #d63031; border-radius: 10px 10px 0 0;
+            border-bottom: 2px dashed rgba(255,255,255,0.5);
+        }
+        .cal-month { font-size: 1.5rem; margin-top: 40px; font-weight: 300; text-transform: uppercase; }
+        .cal-date { font-size: 8rem; font-weight: 900; line-height: 1; color: #2d3436; }
+        .cal-year { font-size: 1.2rem; font-weight: 700; color: #d63031; }
+        .cal-lunar { font-size: 1.1rem; color: #636e72; margin-top: 5px; font-family: 'Dancing Script', cursive; }
+
+        /* --- STYLE ĐẶC BIỆT (Màu Đỏ Vàng) --- */
+        .calendar-page.special-date {
+            background: #b30000;
+            border: 2px solid #ffd700;
+            background-image: radial-gradient(#d63031 15%, transparent 16%);
+        }
+        .calendar-page.special-date::before { background: #800000; border-bottom: 2px dashed gold; }
+        .calendar-page.special-date .cal-month { color: #ffd700; font-weight: bold; }
+        .calendar-page.special-date .cal-date { color: #ffd700; text-shadow: 2px 2px 0px #800000; }
+        .calendar-page.special-date .cal-year { color: #fff; opacity: 0.8; }
+        .calendar-page.special-date .cal-lunar { color: #fff; font-size: 1.4rem; font-weight: bold; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+
+
+        @keyframes tearOff {
+            0% { transform: rotate(0deg); }
+            20% { transform: rotate(-10deg) skewX(5deg); }
+            100% { transform: rotate(60deg) translateY(200px) translateX(400px); opacity: 0; }
+        }
+        .tearing { animation: tearOff 0.9s ease-in forwards; }
+
+        /* --- UI COUNTDOWN --- */
+        #countdown-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; justify-content: center; align-items: center;
+            font-size: 15rem; font-weight: 900; color: #fff;
+            z-index: 60; 
+            text-shadow: 0 0 50px rgba(255,255,255,0.8);
+            font-family: 'Montserrat', sans-serif;
+            pointer-events: none;
+        }
+        @keyframes zoomTick { 
+            0% { transform: scale(0.5); opacity: 0; } 
+            50% { opacity: 1; transform: scale(1.2); } 
+            100% { transform: scale(2); opacity: 0; } 
+        }
+
+        /* --- UI LÌ XÌ (Animation Mở Thư) --- */
+        #lixi-btn {
+            position: absolute; bottom: 20%; left: 50%; transform: translate(-50%, 0);
+            padding: 15px 60px; 
+            background: linear-gradient(45deg, #c0392b, #d35400);
+            border: 2px solid gold; border-radius: 50px; color: #fff; font-weight: 900;
+            font-size: 1.5rem; cursor: pointer; z-index: 20;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8), inset 0 0 10px rgba(255,215,0,0.5);
+            display: none; 
+            animation: popIn 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            transition: transform 0.2s;
+        }
+        #lixi-btn:active { transform: translate(-50%, 0) scale(0.95); }
+        @keyframes popIn { from { transform: translate(-50%, 100px) scale(0); opacity: 0; } to { transform: translate(-50%, 0) scale(1); opacity: 1; } }
+
+        #lixi-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); z-index: 30;
+            display: none; justify-content: center; align-items: center;
+            transition: backdrop-filter 1s ease, background 1s ease;
+        }
+        .envelopes-container {
+            display: flex; gap: 30px; perspective: 1000px;
+            flex-wrap: wrap; justify-content: center; width: 100%;
+            padding-top: 50px;
+        }
+
+        .envelope-wrapper {
+            width: 120px; height: 180px;
+            position: relative;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease;
+        }
+        .envelope-wrapper:hover { transform: translateY(-10px); }
+
+        .env-body {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 85%;
+            background: #c0392b; border-radius: 0 0 10px 10px;
+            border: 2px solid #b33939; border-top: none;
+            z-index: 2; overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        .env-body::before { 
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(circle, #a93226 10%, transparent 10%);
+            background-size: 20px 20px; opacity: 0.3;
+        }
+        .env-body .coin-deco {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 3rem; color: rgba(255, 215, 0, 0.3); font-weight: 900;
+        }
+
+        .env-flap {
+            position: absolute; top: 0; left: 0; width: 100%; height: 15%; 
+            background: #d63031;
+            border-radius: 10px 10px 0 0;
+            border: 2px solid #b33939; border-bottom: none;
+            transform-origin: bottom;
+            z-index: 3;
+            transition: transform 0.4s ease-in-out;
+            border-bottom: 2px solid gold;
+        }
+
+        .env-paper {
+            position: absolute; top: 15%; left: 10px; right: 10px; height: 70%;
+            background: #fffdf5;
+            z-index: 1; 
+            border-radius: 5px;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 0.8rem; color: #333; overflow: hidden;
+        }
+
+        .envelope-wrapper.active { pointer-events: none; } 
+        
+        .envelope-wrapper.active .env-flap {
+            transform: rotateX(180deg);
+            z-index: 0; 
+        }
+        
+        .envelope-wrapper.active .env-paper {
+            z-index: 10;
+            animation: paperUpAndFlip 1s forwards 0.3s;
+        }
+
+        @keyframes paperUpAndFlip {
+            0% { transform: translateY(0) scale(1) rotateY(0); }
+            50% { transform: translateY(-120px) scale(1) rotateY(0); } 
+            100% { transform: translateY(-200px) scale(3) rotateY(90deg); opacity: 0; } 
+        }
+
+        @keyframes flyIn { from { transform: translateY(600px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* POPUP THƯ RESPONSIVE */
+        #letter-modal {
+            position: absolute; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%) rotateY(90deg); 
+            width: 85%; max-width: 600px; max-height: 70vh; 
+            overflow-y: auto;
+            background: #fffdf5 url('https://www.transparenttextures.com/patterns/cream-paper.png');
+            padding: 25px; border-radius: 15px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.9);
+            font-family: 'Patrick Hand', cursive; 
+            font-size: 1.5rem; 
+            color: #2c3e50;
+            z-index: 40; 
+            text-align: center; line-height: 1.5;
+            border: 6px double #d63031;
+            opacity: 0;
+            transition: transform 0.5s ease-out, opacity 0.5s;
+        }
+        #letter-modal.show-flip {
+            transform: translate(-50%, -50%) rotateY(0deg);
+            opacity: 1;
+        }
+
+        @media (max-width: 480px) {
+            #letter-modal { width: 90%; font-size: 1.3rem; padding: 15px; }
+            .start-btn { font-size: 1.2rem; padding: 15px 30px; }
+            .envelope-wrapper { width: 100px; height: 150px; }
+            .final-text { font-size: 2.2rem !important; } /* Chữ nhỏ hơn trên mobile */
+        }
+        .close-btn {
+            margin-top: 20px; padding: 10px 30px; background: #d63031; color: #fff;
+            border: none; border-radius: 8px; cursor: pointer; font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(214, 48, 49, 0.4);
+            font-family: 'Montserrat', sans-serif;
+            display: inline-block;
+        }
+
+        /* MÀN HÌNH CUỐI */
+        #final-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 50; pointer-events: none;
+        }
+        .final-text {
+            font-size: 3.5rem; font-weight: 900; color: #fff; text-align: center;
+            text-shadow: 0 0 20px #ff0055;
+            /* Đã xóa animation pulseText cũ ở đây */
+        }
+        
+        /* CSS MỚI CHO HIỆU ỨNG SÓNG */
+        .wavy-char {
+            display: inline-block; /* Để có thể transform từng chữ */
+            animation: textWave 2.5s ease-in-out infinite;
+        }
+        @keyframes textWave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); } /* Sóng nhẹ, chỉ di chuyển 12px */
+        }
+
+
+        .floating-icon { 
+            position: absolute; 
+            font-size: 2rem; 
+            pointer-events: none;
+            z-index: 55;
+            animation: floatAround 3s ease-out forwards;
+        }
+        .final-icon {
+            position: absolute;
+            font-size: 2.5rem;
+            animation: floatIconFinal 4s infinite ease-in-out;
+            opacity: 0;
+            z-index: 52;
+        }
+
+        @keyframes floatAround {
+            0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
+            20% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1.2); }
+            100% { transform: translate(var(--tx-end), var(--ty-end)) scale(0); opacity: 0; }
+        }
+
+        @keyframes floatIconFinal { 
+            0% { transform: translateY(100px) rotate(0deg); opacity: 0; } 
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateY(-200px) rotate(20deg); opacity: 0; } 
+        }
+
+        #bg-music { position: absolute; width: 1px; height: 1px; opacity: 0; z-index: -1; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <video id="bg-music" playsinline>
+        <source src="4609915912343884169.mp4" type="video/mp4">
+    </video>
+
+    <div id="start-overlay">
+        <button class="start-btn" onclick="startExperience()">Chạm vào đây nèee🧧</button>
+    </div>
+
+    <div id="stage-lights"></div>
+    <div id="canvas-container"><canvas id="canvas"></canvas></div>
+
+    <div id="calendar-container"></div>
+    
+    <div id="countdown-container"></div>
+
+    <button id="lixi-btn">Nhận Lì Xì Nè 🧧</button>
+    <div id="lixi-overlay">
+        <div class="envelopes-container" id="env-container"></div>
+    </div>
+
+    <div id="letter-modal">
+        <div id="letter-content"></div>
+        <button class="close-btn" onclick="closeLetter()">Đóng lại</button>
+    </div>
+
+    <div id="final-screen">
+        <div class="final-text">HAPPY NEW YEAR<br>QUỲNH <span style="color:red">♥</span></div>
+    </div>
+
+    <script>
+        // --- DATA ---
+        const DATES = [
+            { d: 28, m: 12, y: 2025, l: "..." },
+            { d: 29, m: 12, y: 2025, l: "Đêm Giao Thừa" },
+            { d: "01", m: "01", y: 2026, l: "Tết Nguyên Đán" }
+        ];
+
+        const LETTERS = [
+            "🧧 Gửi yêu thương của tou năm 2026 Chúc Quỳnh một năm mới tràn đầy niềm vui,sức khỏe và những điều may mắn.Năm mới không chỉ là khởi đầu cho một hành trình mới mà còn là 1 cơ hội để người nhìn lại những khoảnh khắc, trân trọng những gì mình đã trải qua",
+            "🎆 Cùng vượt qua khó khăn,không ngừng phát triển và đặt mục tiêu mà bản thân đề ra để giúp bản thân ngày càng tốt hơn.Hy vọng rằng Quình sẽ biết để ý bản thân mình hơn,giữ một trái tim kiên cường và tâm hồn lạc quan hong phải khócc vì những thứ không đáng. Nếu có khóc thì có tui trêu cho cười:)))))",
+            "🚀 Cuộc sống không phải lúc nào cũng suôn sẻ,nhưng mà hãy nhớ là mỗi thử thách hay thất bại là một bước đệm để cau dần trưởng thành hơn.Lun giữ được sự tích cực và nụ cười trên môi nhá vì nó dthw=))) :>",
+            "🥰 Chúc Quỳnh năm mới ngập trànnnn niềm zui,lun biec yêu thw bản thân và trân trọng.Một năm mới tuyệt zờii đang chờ ở phía trước hãy bỏ những muộn phiền của năm cũ và đón một năm mới thật là zuiiii <3",
+            "🥳Qua năm cũng sắp tới chặng đường lên cấp ròi,cùng nhau học thật giỏii,lun đạt điểm cao,đạt được điều mong ước trong năm học.Cảm ơn vì đã ở đây với bao sự rời đi của những người khác.Cảm ơn nhìu vì vẫn ở đây dù đôi lúc Hải gây ra nhiều phiền phức hay khó chịu,nhưng mà tou rất trân trọng những khoảnh khắc đẹp này.Cảm ơn rấttt rất nhiềuuuuuu,tiếp tục đi tiếp con đường sắp tới nhó💗"
+        ];
+
+        // --- AUDIO ---
+        const AudioSys = {
+            ctx: null,
+            init() { 
+                if(!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)(); 
+                    const buffer = this.ctx.createBuffer(1, 1, 22050);
+                    const source = this.ctx.createBufferSource();
+                    source.buffer = buffer; source.connect(this.ctx.destination);
+                    source.start(0);
+                }
+            },
+            play(type) {
+                if(!this.ctx) return;
+                const t = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                
+                if (type === 'launch') {
+                    osc.frequency.setValueAtTime(150, t); osc.frequency.exponentialRampToValueAtTime(600, t + 0.8);
+                    gain.gain.setValueAtTime(0.1, t); gain.gain.linearRampToValueAtTime(0, t + 0.8);
+                } else if (type === 'boom') {
+                    osc.frequency.setValueAtTime(120, t); osc.frequency.exponentialRampToValueAtTime(10, t + 0.5);
+                    gain.gain.setValueAtTime(1.5, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
+                }
+                
+                osc.connect(gain); gain.connect(this.ctx.destination); osc.start(t); osc.stop(t + 2);
+            }
+        };
+
+        // --- START LOGIC ---
+        function startExperience() {
+            document.getElementById('start-overlay').style.display = 'none';
+            document.getElementById('calendar-container').style.display = 'block';
+            AudioSys.init();
+            const music = document.getElementById('bg-music');
+            music.volume = 0; music.play().then(() => { music.pause(); music.currentTime = 0; music.volume = 1.0; }).catch(e=>{});
+            
+            // --- XỬ LÝ CHUYỂN BÀI HÁT TỰ ĐỘNG ---
+            // Khi bài 1 kết thúc, tự động play bài Low G
+            music.addEventListener('ended', function() {
+                // Kiểm tra xem có đang ở bài đầu tiên không (bằng tên file hoặc đường dẫn)
+                if (this.currentSrc.indexOf("4609915912343884169.mp4") !== -1 || this.src.indexOf("4609915912343884169.mp4") !== -1) {
+                    this.src = "Low G  In Love (ft. JustaTee)  L2K The Album.mp3";
+                    this.play();
+                }
+            });
+
+            initCalendar();
+        }
+
+        // --- GRAPHICS ---
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let w, h; const r = (min, max) => Math.random() * (max - min) + min;
+        function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+
+        // --- CALENDAR LOGIC ---
+        const calContainer = document.getElementById('calendar-container');
+        let dateIndex = 0;
+        function initCalendar() {
+            for (let i = DATES.length - 1; i >= 0; i--) {
+                const d = DATES[i];
+                const el = document.createElement('div');
+                el.className = 'calendar-page'; el.style.zIndex = 100 - i;
+                
+                if ( (d.d == 29) || (d.d == "01" && d.m == "01") ) {
+                    el.classList.add('special-date');
+                }
+
+                el.innerHTML = `<div class="cal-month">Tháng ${d.m}</div><div class="cal-date">${d.d}</div><div class="cal-year">${d.y}</div><div class="cal-lunar">${d.l}</div>`;
+                calContainer.appendChild(el);
+            }
+            setTimeout(tearNextPage, 1000);
+        }
+
+        function tearNextPage() {
+            if (dateIndex < DATES.length - 1) { 
+                const pageToTear = calContainer.children[DATES.length - 1 - dateIndex];
+                if(pageToTear) {
+                    pageToTear.classList.add('tearing');
+                    AudioSys.play('launch'); 
+                }
+                dateIndex++;
+                setTimeout(tearNextPage, 1000); 
+            } else {
+                setTimeout(startCountdown, 800);
+            }
+        }
+
+        // --- COUNTDOWN LOGIC ---
+        function startCountdown() {
+            calContainer.style.display = 'none';
+            const countDiv = document.getElementById('countdown-container');
+            countDiv.style.display = 'flex';
+            let count = 3;
+
+            const music = document.getElementById('bg-music');
+            music.currentTime = 0; music.volume = 1.0; music.play().catch(e => console.log(e));
+
+            function tick() {
+                if(count > 0) {
+                    countDiv.innerText = count;
+                    countDiv.style.animation = 'none';
+                    countDiv.offsetHeight; 
+                    countDiv.style.animation = 'zoomTick 0.9s ease-out';
+                    count--;
+                    setTimeout(tick, 1000);
+                } else {
+                    countDiv.style.display = 'none';
+                    startFireworksShow();
+                }
+            }
+            tick();
+        }
+
+        // --- FIREWORKS SYSTEM ---
+        const PHY = { g: 0.05, drag: 0.96 };
+        let rockets = [], particles = [], fountains = [], drones = [];
+        let showState = 'IDLE';
+
+        class Particle {
+            constructor(x, y, hue, vx, vy, type) {
+                this.x = x; this.y = y; this.hue = hue;
+                this.vx = vx; this.vy = vy;
+                this.type = type || 'spark';
+                this.alpha = 1;
+                this.life = r(100, 200);
+                this.decay = type === 'sub_shell' ? r(0.005, 0.01) : r(0.008, 0.015);
+                if (this.type === 'smoke') { this.life = r(30, 60); this.decay = r(0.01, 0.03); this.size = r(2, 5); }
+            }
+            update() {
+                this.vx *= PHY.drag; this.vy *= PHY.drag; 
+                if (this.type === 'smoke') { this.vy -= 0.02; this.x += Math.sin(this.life * 0.1) * 0.5; this.size *= 1.02; } 
+                else { this.vy += PHY.g; }
+                this.x += this.vx; this.y += this.vy;
+                this.alpha -= this.decay;
+                if(this.type === 'spark' && Math.random() < 0.1) this.alpha = Math.random(); 
+                if (this.type === 'sub_shell' && (this.alpha <= 0.2 || this.life <= 0)) { this.explodeSecondTime(); this.alpha = 0; }
+                this.life--;
+            }
+            draw(ctx) {
+                if (this.alpha <= 0) return;
+                ctx.save(); ctx.globalAlpha = this.alpha;
+                if (this.type === 'smoke') {
+                    ctx.fillStyle = `rgba(150, 150, 150, ${this.alpha})`;
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+                } else {
+                    ctx.globalCompositeOperation = 'lighter';
+                    ctx.fillStyle = `hsla(${this.hue}, 100%, 60%, ${this.alpha})`;
+                    ctx.beginPath(); ctx.arc(this.x, this.y, (this.type === 'core' ? 3 : (this.type==='sub_shell'?2:1.5)), 0, Math.PI * 2); ctx.fill();
+                }
+                ctx.restore();
+            }
+            explodeSecondTime() {
+                for (let i = 0; i < 15; i++) {
+                    const angle = r(0, Math.PI * 2); const speed = r(1, 4);
+                    particles.push(new Particle(this.x, this.y, this.hue + 20, Math.cos(angle)*speed, Math.sin(angle)*speed, 'spark'));
+                }
+            }
+        }
+
+        class Rocket {
+            constructor(x, targetY) {
+                this.x = x; this.y = h; this.targetY = targetY;
+                this.vx = 0; this.vy = -Math.sqrt(2 * PHY.g * (h - targetY)); 
+                this.hue = r(0, 360);
+                AudioSys.play('launch');
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy; this.vy += PHY.g;
+                if (this.vy >= 0) { this.explode(); return false; }
+                return true;
+            }
+            draw(ctx) {
+                ctx.save(); ctx.strokeStyle = `hsl(${this.hue}, 100%, 50%)`; ctx.lineWidth = 2; 
+                ctx.beginPath(); ctx.moveTo(this.x, this.y); ctx.lineTo(this.x, this.y + 15); ctx.stroke(); ctx.restore();
+            }
+            explode() {
+                const shapeType = Math.random();
+                const cx = this.x; const cy = this.y; const hue = this.hue;
+                
+                for(let k=0; k<15; k++) particles.push(new Particle(cx, cy, 0, r(-2,2), r(-2,2), 'smoke'));
+
+                if (shapeType < 0.3) { // Sub-shell
+                    for (let i = 0; i < 30; i++) {
+                        const angle = r(0, Math.PI * 2); const speed = r(4, 10);
+                        particles.push(new Particle(cx, cy, hue, Math.cos(angle)*speed, Math.sin(angle)*speed, 'sub_shell'));
+                    }
+                    for (let i = 0; i < 20; i++) {
+                        const angle = r(0, Math.PI * 2); const speed = r(1, 5);
+                        particles.push(new Particle(cx, cy, hue, Math.cos(angle)*speed, Math.sin(angle)*speed, 'core'));
+                    }
+                }
+                else if (shapeType < 0.5) { // Ring
+                    const points = 5; const steps = points * 2;
+                    for (let i = 0; i < 60; i++) {
+                        const angle = (Math.PI * 2 / steps) * (i % steps); 
+                        const isOuter = (i % 2 === 0);
+                        const v = (isOuter ? 6 : 3) + r(-0.5, 0.5); 
+                        particles.push(new Particle(cx, cy, hue, Math.cos(angle - Math.PI/2) * v, Math.sin(angle - Math.PI/2) * v, 'core'));
+                    }
+                }
+                else if (shapeType < 0.7) { // Core burst
+                    for (let i = 0; i < 60; i++) {
+                        const angle = (Math.PI*2 / 60) * i;
+                        const vx = Math.cos(angle) * 8; const vy = Math.sin(angle) * 2; 
+                        particles.push(new Particle(cx, cy, hue, vx, vy, 'core'));
+                    }
+                }
+                else { // Spark burst
+                    for (let i = 0; i < 100; i++) {
+                        const angle = r(0, Math.PI * 2); const speed = r(1, 8);
+                        particles.push(new Particle(cx, cy, hue, Math.cos(angle)*speed, Math.sin(angle)*speed, 'spark'));
+                    }
+                }
+            }
+        }
+
+        class Fountain {
+            constructor(x) { this.x = x; this.y = h; this.timer = 0; }
+            update() {
+                this.timer++;
+                if (this.timer % 3 === 0) {
+                    const angle = -Math.PI/2 + (Math.random() - 0.5) * 0.4;
+                    const speed = r(8, 14);
+                    const c = 40 + Math.random()*20; 
+                    particles.push(new Particle(this.x, this.y, c, Math.cos(angle)*speed*0.5, Math.sin(angle)*speed, 'spark'));
+                }
+            }
+        }
+
+        class Drone {
+            constructor() {
+                this.x = Math.random() * w; this.y = Math.random() * h;
+                this.tx = this.x; this.ty = this.y;
+                this.color = '#fff';
+            }
+            update() { this.x += (this.tx - this.x) * 0.08; this.y += (this.ty - this.y) * 0.08; }
+            draw(ctx) { ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, 2, 0, Math.PI*2); ctx.fill(); }
+        }
+
+        // --- TEXT TO POINTS LOGIC ---
+        function getPointsFromMultiLineText(textArray, scale, colorMode) {
+            const tCanvas = document.createElement('canvas'); const tCtx = tCanvas.getContext('2d');
+            const lineHeight = 100;
+            tCanvas.width = 600; tCanvas.height = textArray.length * lineHeight + 100;
+            tCtx.font = "900 80px Montserrat"; tCtx.textAlign = "center"; tCtx.textBaseline = "middle";
+            tCtx.fillStyle = "#fff";
+            
+            for (let i = 0; i < textArray.length; i++) {
+                tCtx.fillText(textArray[i], 300, (i + 1) * lineHeight);
+            }
+
+            const pData = tCtx.getImageData(0,0,600, tCanvas.height).data;
+            let points = [];
+            for(let y=0; y<tCanvas.height; y+=4) for(let x=0; x<600; x+=4) {
+                if (pData[(y*600+x)*4 + 3] > 128) {
+                    let c = "#fff";
+                    if(colorMode === 'rainbow') {
+                        c = `hsl(${(x/600)*360}, 100%, 60%)`;
+                    } else if (colorMode === 'love') {
+                        const percent = x/600;
+                        c = `hsl(${330 + percent*30}, 100%, 60%)`;
+                    } else {
+                        c = colorMode;
+                    }
+                    points.push({x: (x - 300) * scale + w/2, y: (y - tCanvas.height/2) * scale + h/2, c: c});
+                }
+            }
+            return points;
+        }
+
+        function getHeartPoints() {
+            let points = [];
+            for (let t = 0; t < Math.PI * 2; t += 0.05) {
+                let x = 16 * Math.pow(Math.sin(t), 3);
+                let y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                points.push({ x: x * 15 + w/2, y: y * 15 + h/2 - 50, c: '#ff0055' });
+            }
+            return points;
+        }
+
+        function getPeachBlossomPoints() {
+            let points = [];
+            for(let i=0; i<100; i++) {
+                let t = i/100;
+                let x = (1-t)*(1-t)*(w*0.3) + 2*(1-t)*t*(w*0.5) + t*t*(w*0.8);
+                let y = (1-t)*(1-t)*(h*0.8) + 2*(1-t)*t*(h*0.7) + t*t*(h*0.3);
+                points.push({x: x, y: y, c: '#5d4037'});
+            }
+            const flowers = [ {x: 0.35, y: 0.75}, {x: 0.5, y: 0.6}, {x: 0.65, y: 0.45}, {x: 0.75, y: 0.35}, {x: 0.55, y: 0.5} ];
+            flowers.forEach(fl => {
+                let cx = w * fl.x; let cy = h * fl.y;
+                for(let j=0; j<5; j++) {
+                    let angle = (Math.PI*2/5)*j;
+                    let petalX = cx + Math.cos(angle)*15;
+                    let petalY = cy + Math.sin(angle)*15;
+                    for(let k=0; k<10; k++) { points.push({ x: petalX + (Math.random()-0.5)*10, y: petalY + (Math.random()-0.5)*10, c: '#ff9ff3' }); }
+                }
+                for(let k=0; k<5; k++) points.push({x: cx + r(-3,3), y: cy + r(-3,3), c: 'gold'});
+            });
+            return points;
+        }
+
+        function formShape(points) {
+            if (drones.length < points.length) for(let i=0; i<points.length - drones.length; i++) drones.push(new Drone());
+            else if (drones.length > points.length) drones.splice(points.length);
+            for(let i=0; i<points.length; i++) { drones[i].tx = points[i].x; drones[i].ty = points[i].y; drones[i].color = points[i].c; }
+        }
+
+        function spawnIconsAroundCenter() {
+            const container = document.body;
+            const icons = ['❤️', '✨', '⭐', '💖', '💕', '🌟'];
+            const icon = document.createElement('div');
+            icon.className = 'floating-icon';
+            icon.innerText = icons[Math.floor(Math.random() * icons.length)];
+            
+            const angle = Math.random() * Math.PI * 2;
+            const radius = Math.random() * 100 + 50; 
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            const startX = centerX + Math.cos(angle) * (radius * 0.5);
+            const startY = centerY + Math.sin(angle) * (radius * 0.5);
+
+            icon.style.left = startX + 'px'; 
+            icon.style.top = startY + 'px'; 
+
+            const endX = (Math.random() - 0.5) * 200;
+            const endY = (Math.random() - 0.5) * 200;
+            icon.style.setProperty('--tx', endX + 'px');
+            icon.style.setProperty('--ty', endY + 'px');
+            icon.style.setProperty('--tx-end', endX * 1.5 + 'px');
+            icon.style.setProperty('--ty-end', endY * 1.5 - 50 + 'px');
+
+            container.appendChild(icon);
+            setTimeout(() => icon.remove(), 3000);
+        }
+
+        // --- MAIN LOOP ---
+        let startTime = 0;
+        let lastRocketTime = 0;
+        let salvoCount = 0;
+        let lastSalvoTime = 0;
+
+        function loop() {
+            requestAnimationFrame(loop);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; ctx.fillRect(0, 0, w, h);
+
+            if (showState === 'FIREWORKS') {
+                const now = Date.now();
+                const elapsed = now - startTime;
+
+                if (fountains.length === 0) fountains.push(new Fountain(50), new Fountain(w - 50));
+                fountains.forEach(f => f.update());
+
+                if (salvoCount < 3) {
+                    if (now - lastSalvoTime > 2000) { 
+                        rockets.push(new Rocket(w * 0.2, h * 0.2));
+                        rockets.push(new Rocket(w * 0.5, h * 0.2));
+                        rockets.push(new Rocket(w * 0.8, h * 0.2));
+                        salvoCount++;
+                        lastSalvoTime = now;
+                    }
+                }
+                else if (elapsed < 30000) {
+                    if (now - lastRocketTime > 500) {
+                        rockets.push(new Rocket(Math.random() * w, h*0.1 + Math.random()*h*0.4));
+                        lastRocketTime = now;
+                    }
+                }
+                else {
+                    showState = 'DRONE_1';
+                    fountains = [];
+                }
+            }
+            else if (showState === 'DRONE_1') {
+                formShape(getPointsFromMultiLineText(["HAPPY", "NEW YEAR"], (w<500?0.6:1.2), "rainbow"));
+                setTimeout(() => { if(showState === 'DRONE_1') showState = 'DRONE_2'; }, 5000);
+            }
+            else if (showState === 'DRONE_2') {
+                formShape(getPointsFromMultiLineText(["QUỲNH"], (w<500?1.0:2.0), "love"));
+                if(Math.random() < 0.4) spawnIconsAroundCenter(); 
+                setTimeout(() => { if(showState === 'DRONE_2') showState = 'DRONE_3'; }, 6000);
+            }
+            else if (showState === 'DRONE_3') {
+                formShape(getPeachBlossomPoints());
+                setTimeout(() => { if(showState === 'DRONE_3') showState = 'DRONE_4'; }, 5000);
+            }
+            else if (showState === 'DRONE_4') {
+                formShape(getHeartPoints());
+                document.getElementById('lixi-btn').style.display = 'block';
+            }
+
+            rockets = rockets.filter(r => { r.draw(ctx); return r.update(); });
+            particles = particles.filter(p => { p.draw(ctx); p.update(); return p.life > 0; });
+            drones.forEach(d => { d.update(); d.draw(ctx); });
+        }
+
+        function startFireworksShow() {
+            calContainer.style.display = 'none';
+            startTime = Date.now();
+            showState = 'FIREWORKS';
+            loop();
+        }
+
+        // --- INTERACTION ---
+        const btnLixi = document.getElementById('lixi-btn');
+        const overlay = document.getElementById('lixi-overlay');
+        const envContainer = document.getElementById('env-container');
+        const letterModal = document.getElementById('letter-modal');
+        const letterContent = document.getElementById('letter-content');
+        let openedCount = 0;
+        let currentEnvelopeEl = null;
+
+        btnLixi.addEventListener('click', () => {
+            btnLixi.style.display = 'none'; 
+            overlay.style.display = 'flex';
+            overlay.style.background = 'rgba(0,0,0,0.4)';
+            overlay.style.backdropFilter = 'blur(0px)';
+
+            envContainer.innerHTML = '';
+            
+            // --- TẠO 5 LÌ XÌ ---
+            for(let i=1; i<=5; i++) {
+                const envWrapper = document.createElement('div');
+                envWrapper.className = 'envelope-wrapper';
+                envWrapper.style.animation = `flyIn 1s ease forwards ${i*0.2}s`;
+                
+                envWrapper.innerHTML = `
+                    <div class="env-flap"></div>
+                    <div class="env-paper">✉️ Surprise!</div>
+                    <div class="env-body"><div class="coin-deco">Phúc</div></div>
+                `;
+
+                envWrapper.onclick = () => openEnvelope(i-1, envWrapper);
+                envContainer.appendChild(envWrapper);
+            }
+        });
+
+        function openEnvelope(index, el) {
+            currentEnvelopeEl = el;
+            el.classList.add('active'); 
+            
+            overlay.style.backdropFilter = "blur(8px)";
+            overlay.style.background = "rgba(0,0,0,0.6)";
+
+            setTimeout(() => {
+                letterContent.innerHTML = LETTERS[index];
+                letterModal.classList.add('show-flip'); 
+                el.style.opacity = '0'; 
+            }, 900); 
+            
+            openedCount++;
+        }
+
+        function closeLetter() {
+            letterModal.classList.remove('show-flip');
+            overlay.style.backdropFilter = "blur(0px)";
+            overlay.style.background = "rgba(0,0,0,0.4)";
+
+            if(currentEnvelopeEl) {
+                currentEnvelopeEl.style.display = 'none'; 
+            }
+
+            // --- KIỂM TRA ĐỦ 5 BAO MỚI HIỆN MÀN HÌNH CUỐI ---
+            if (openedCount === 5) setTimeout(showFinalScene, 1000);
+        }
+
+        function showFinalScene() {
+            overlay.style.display = 'none';
+            document.getElementById('canvas-container').style.display = 'none'; 
+            btnLixi.style.display = 'none';
+            
+            showState = 'ENDED';
+
+            document.body.style.background = "radial-gradient(circle, #5e0000, #1a0000)";
+
+            document.getElementById('final-screen').style.display = 'flex';
+            
+            // --- XỬ LÝ HIỆU ỨNG SÓNG CHO CHỮ ---
+            const finalTextContainer = document.querySelector('.final-text');
+            let htmlContent = finalTextContainer.innerHTML;
+            let parts = htmlContent.split('<br>'); // Tách phần "HAPPY NEW YEAR" và phần "QUỲNH..."
+            let textToWave = parts[0]; // Chỉ lấy phần đầu để tạo sóng
+
+            // Tách từng chữ cái và bọc vào thẻ span với animation-delay
+            let wavedText = textToWave.split('').map((char, index) => {
+                if (char === ' ') return ' '; // Giữ nguyên khoảng trắng
+                let delay = index * 0.1; // Độ trễ tăng dần
+                return `<span class="wavy-char" style="animation-delay: ${delay}s">${char}</span>`;
+            }).join('');
+
+            // Gép lại HTML mới
+            finalTextContainer.innerHTML = wavedText + '<br>' + parts[1];
+
+            // --- HIỆU ỨNG ICON BAY ---
+            const icons = ['🌸', '✨', '🍀', '❤️', '🥰', '🦋', '🎁', '💖', '🌟'];
+            const fs = document.getElementById('final-screen');
+            
+            setInterval(() => {
+                const ic = document.createElement('div'); 
+                ic.className = 'final-icon';
+                ic.innerText = icons[Math.floor(Math.random()*icons.length)];
+                
+                ic.style.left = Math.random()*100 + '%'; 
+                ic.style.top = (Math.random()*40 + 60) + '%'; 
+                
+                ic.style.animationDuration = (Math.random()*3 + 3) + 's';
+                fs.appendChild(ic); 
+                setTimeout(() => ic.remove(), 6000);
+            }, 200);
+        }
+
+    </script>
+</body>
+</html>
