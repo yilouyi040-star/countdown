@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Happy New Year 2026 - For Quynh</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;900&family=Dancing+Script:wght@700&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <title>Happy New Year 2026 - For Quynh iu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;900&family=Dancing+Script:wght@700&family=Patrick+Hand&family=Pacifico&display=swap" rel="stylesheet">
     <style>
         /* --- CẤU HÌNH CHUNG --- */
         body {
@@ -84,7 +84,6 @@
         .calendar-page.special-date .cal-year { color: #fff; opacity: 0.8; }
         .calendar-page.special-date .cal-lunar { color: #fff; font-size: 1.4rem; font-weight: bold; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
 
-
         @keyframes tearOff {
             0% { transform: rotate(0deg); }
             20% { transform: rotate(-10deg) skewX(5deg); }
@@ -108,7 +107,7 @@
             100% { transform: scale(2); opacity: 0; } 
         }
 
-        /* --- UI LÌ XÌ (Animation Mở Thư) --- */
+        /* --- UI LÌ XÌ --- */
         #lixi-btn {
             position: absolute; bottom: 20%; left: 50%; transform: translate(-50%, 0);
             padding: 15px 60px; 
@@ -134,7 +133,6 @@
             flex-wrap: wrap; justify-content: center; width: 100%;
             padding-top: 50px;
         }
-
         .envelope-wrapper {
             width: 120px; height: 180px;
             position: relative;
@@ -160,7 +158,6 @@
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             font-size: 3rem; color: rgba(255, 215, 0, 0.3); font-weight: 900;
         }
-
         .env-flap {
             position: absolute; top: 0; left: 0; width: 100%; height: 15%; 
             background: #d63031;
@@ -171,7 +168,6 @@
             transition: transform 0.4s ease-in-out;
             border-bottom: 2px solid gold;
         }
-
         .env-paper {
             position: absolute; top: 15%; left: 10px; right: 10px; height: 70%;
             background: #fffdf5;
@@ -182,25 +178,14 @@
             display: flex; justify-content: center; align-items: center;
             font-size: 0.8rem; color: #333; overflow: hidden;
         }
-
         .envelope-wrapper.active { pointer-events: none; } 
-        
-        .envelope-wrapper.active .env-flap {
-            transform: rotateX(180deg);
-            z-index: 0; 
-        }
-        
-        .envelope-wrapper.active .env-paper {
-            z-index: 10;
-            animation: paperUpAndFlip 1s forwards 0.3s;
-        }
-
+        .envelope-wrapper.active .env-flap { transform: rotateX(180deg); z-index: 0; }
+        .envelope-wrapper.active .env-paper { z-index: 10; animation: paperUpAndFlip 1s forwards 0.3s; }
         @keyframes paperUpAndFlip {
             0% { transform: translateY(0) scale(1) rotateY(0); }
             50% { transform: translateY(-120px) scale(1) rotateY(0); } 
             100% { transform: translateY(-200px) scale(3) rotateY(90deg); opacity: 0; } 
         }
-
         @keyframes flyIn { from { transform: translateY(600px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         /* POPUP THƯ RESPONSIVE */
@@ -221,17 +206,7 @@
             opacity: 0;
             transition: transform 0.5s ease-out, opacity 0.5s;
         }
-        #letter-modal.show-flip {
-            transform: translate(-50%, -50%) rotateY(0deg);
-            opacity: 1;
-        }
-
-        @media (max-width: 480px) {
-            #letter-modal { width: 90%; font-size: 1.3rem; padding: 15px; }
-            .start-btn { font-size: 1.2rem; padding: 15px 30px; }
-            .envelope-wrapper { width: 100px; height: 150px; }
-            .final-text { font-size: 2.2rem !important; } /* Chữ nhỏ hơn trên mobile */
-        }
+        #letter-modal.show-flip { transform: translate(-50%, -50%) rotateY(0deg); opacity: 1; }
         .close-btn {
             margin-top: 20px; padding: 10px 30px; background: #d63031; color: #fff;
             border: none; border-radius: 8px; cursor: pointer; font-size: 1.2rem;
@@ -249,33 +224,44 @@
         .final-text {
             font-size: 3.5rem; font-weight: 900; color: #fff; text-align: center;
             text-shadow: 0 0 20px #ff0055;
-            /* Đã xóa animation pulseText cũ ở đây */
+            margin-bottom: 20px;
         }
-        
-        /* CSS MỚI CHO HIỆU ỨNG SÓNG */
-        .wavy-char {
-            display: inline-block; /* Để có thể transform từng chữ */
-            animation: textWave 2.5s ease-in-out infinite;
-        }
-        @keyframes textWave {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); } /* Sóng nhẹ, chỉ di chuyển 12px */
-        }
+        .wavy-char { display: inline-block; animation: textWave 2.5s ease-in-out infinite; }
+        @keyframes textWave { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 
+        /* --- STYLE CHO DÒNG CHỮ "TỚ THÍCH CẬU" MỚI --- */
+        #love-message {
+            font-family: 'Pacifico', cursive; /* Font chữ viết tay mềm mại */
+            font-size: 4.5rem;
+            background: linear-gradient(to right, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 20, 147, 0.6);
+            opacity: 0; /* Ẩn mặc định */
+            transform: scale(0.5);
+            transition: all 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-top: 20px;
+            z-index: 60;
+        }
+        #love-message.show-love {
+            opacity: 1;
+            transform: scale(1);
+            animation: heartBeat 1.2s infinite alternate;
+        }
+        @keyframes heartBeat {
+            0% { transform: scale(1); text-shadow: 0 0 30px rgba(255, 20, 147, 0.6); }
+            100% { transform: scale(1.1); text-shadow: 0 0 60px rgba(255, 0, 100, 1); filter: brightness(1.2); }
+        }
 
         .floating-icon { 
-            position: absolute; 
-            font-size: 2rem; 
-            pointer-events: none;
-            z-index: 55;
+            position: absolute; font-size: 2rem; pointer-events: none; z-index: 55;
             animation: floatAround 3s ease-out forwards;
         }
         .final-icon {
-            position: absolute;
-            font-size: 2.5rem;
+            position: absolute; font-size: 2.5rem;
             animation: floatIconFinal 4s infinite ease-in-out;
-            opacity: 0;
-            z-index: 52;
+            opacity: 0; z-index: 52;
         }
 
         @keyframes floatAround {
@@ -283,12 +269,18 @@
             20% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1.2); }
             100% { transform: translate(var(--tx-end), var(--ty-end)) scale(0); opacity: 0; }
         }
-
         @keyframes floatIconFinal { 
             0% { transform: translateY(100px) rotate(0deg); opacity: 0; } 
-            20% { opacity: 1; }
-            80% { opacity: 1; }
+            20% { opacity: 1; } 80% { opacity: 1; }
             100% { transform: translateY(-200px) rotate(20deg); opacity: 0; } 
+        }
+
+        @media (max-width: 480px) {
+            #letter-modal { width: 90%; font-size: 1.3rem; padding: 15px; }
+            .start-btn { font-size: 1.2rem; padding: 15px 30px; }
+            .envelope-wrapper { width: 100px; height: 150px; }
+            .final-text { font-size: 2.2rem !important; } 
+            #love-message { font-size: 3rem !important; }
         }
 
         #bg-music { position: absolute; width: 1px; height: 1px; opacity: 0; z-index: -1; pointer-events: none; }
@@ -323,6 +315,7 @@
 
     <div id="final-screen">
         <div class="final-text">HAPPY NEW YEAR<br>QUỲNH <span style="color:red">♥</span></div>
+        <div id="love-message">Tớ thích cậu ❤️</div>
     </div>
 
     <script>
@@ -334,11 +327,11 @@
         ];
 
         const LETTERS = [
-            "🧧 Gửi yêu thương của tou năm 2026 Chúc Quỳnh một năm mới tràn đầy niềm vui,sức khỏe và những điều may mắn.Năm mới không chỉ là khởi đầu cho một hành trình mới mà còn là 1 cơ hội để người nhìn lại những khoảnh khắc, trân trọng những gì mình đã trải qua",
-            "🎆 Cùng vượt qua khó khăn,không ngừng phát triển và đặt mục tiêu mà bản thân đề ra để giúp bản thân ngày càng tốt hơn.Hy vọng rằng Quình sẽ biết để ý bản thân mình hơn,giữ một trái tim kiên cường và tâm hồn lạc quan hong phải khócc vì những thứ không đáng. Nếu có khóc thì có tui trêu cho cười:)))))",
-            "🚀 Cuộc sống không phải lúc nào cũng suôn sẻ,nhưng mà hãy nhớ là mỗi thử thách hay thất bại là một bước đệm để cau dần trưởng thành hơn.Lun giữ được sự tích cực và nụ cười trên môi nhá vì nó dthw=))) :>",
-            "🥰 Chúc Quỳnh năm mới ngập trànnnn niềm zui,lun biec yêu thw bản thân và trân trọng.Một năm mới tuyệt zờii đang chờ ở phía trước hãy bỏ những muộn phiền của năm cũ và đón một năm mới thật là zuiiii <3",
-            "🥳Qua năm cũng sắp tới chặng đường lên cấp ròi,cùng nhau học thật giỏii,lun đạt điểm cao,đạt được điều mong ước trong năm học.Cảm ơn vì đã ở đây với bao sự rời đi của những người khác.Cảm ơn nhìu vì vẫn ở đây dù đôi lúc Hải gây ra nhiều phiền phức hay khó chịu,nhưng mà tou rất trân trọng những khoảnh khắc đẹp này.Cảm ơn rấttt rất nhiềuuuuuu,tiếp tục đi tiếp con đường sắp tới nhó💗"
+            "🧧 Gửi yêu thương của tou năm 2026 Chúc Quỳnh một năm mới tràn đầy niềm vui,sức khỏe và những điều may mắn,lun xinh đẹp và dthw :3.Năm mới không chỉ là khởi đầu cho một hành trình mới mà còn là 1 cơ hội để người nhìn lại những khoảnh khắc đã trôi qua, trân trọng những gì Quỳnhh đã trải qua",
+            "🎆 Cùng vượt qua khó khăn,không ngừng phát triển và đặt mục tiêu mà bản thân đề ra để giúp bản thân ngày càng tốt hơn.Hy vọng rằng Quình sẽ biết để ý bản thân mình hơn,giữ một trái tim kiên cường và tâm hồn lạc quan hong phải khócc vì những thứ không đáng. Nếu có khóc thì có tui ở đây dỗ, trêu cho cười:)))))",
+            "🚀 Cuộc sống không phải lúc nào cũng suôn sẻ,đôi lúc không như cau mong muốn và lm Quình bùn,nhưng mà hãy nhớ là mỗi thử thách hay thất bại là một bước đệm để cau dần trưởng thành hơn.Lun giữ được sự tích cực và nụ cười trên môi nhá vì nó dthw=))) :>",
+            "🥰 Chúc cô nàng:)) có năm mới ngập trànnnn niềm zui,lun biec yêu thw và để ý bản thân của mìnn và trân trọng hơnn . Một năm mới tuyệt zờii đang chờ ở phía trước đóo, nên là nhớ là hãy bỏ đi tất cả những muộn phiền của năm cũ và đón một năm mới thật là zuiiii <3",
+            "🥳 Qua năm cũng sắp tới chặng đường lên cấp 3 ròi,cùng nhau gánggg học thật giỏii, lun đạt điểm cao, đạt được điều mong ước trong năm học. Cảm ơn vì đã ở đây với bao sự rời đi của những người khác.Cảm ơn nhìu vì vẫn ở đây dù đôi lúc Hải gây ra nhiều phiền phức hay khó chịu mà cô nương zẫn ở đayy zới tui,toii gấc biết ơnnn vàa rấtt trân trọng những khoảnh khắc đẹp nàyyyyy .Cảm ơn rấttt rấttttttt nhiềuuuuuu,tiếp tục đi tiếp con đường sắp tới nhóoo,  iu💗"
         ];
 
         // --- AUDIO ---
@@ -365,29 +358,31 @@
                 } else if (type === 'boom') {
                     osc.frequency.setValueAtTime(120, t); osc.frequency.exponentialRampToValueAtTime(10, t + 0.5);
                     gain.gain.setValueAtTime(1.5, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
+                } else if (type === 'crackle') { // Âm thanh nổ lách tách mới
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(500, t);
+                    osc.frequency.exponentialRampToValueAtTime(100, t + 0.1);
+                    gain.gain.setValueAtTime(0.2, t);
+                    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
                 }
                 
                 osc.connect(gain); gain.connect(this.ctx.destination); osc.start(t); osc.stop(t + 2);
             }
         };
 
-        // --- START LOGIC (SỬA LẠI LOGIC NHẠC) ---
         function startExperience() {
             document.getElementById('start-overlay').style.display = 'none';
             document.getElementById('calendar-container').style.display = 'block';
             AudioSys.init();
             
-            // XỬ LÝ NHẠC
             const music = document.getElementById('bg-music');
             music.volume = 1.0;
             music.play().catch(e => console.log("Lỗi phát nhạc:", e));
 
-            // Tự động chuyển bài khi hết intro.mp4
             music.onended = function() {
-                // Kiểm tra nếu đang chạy bài intro (intro.mp4)
                 if (this.currentSrc.includes("intro.mp4") || this.src.includes("intro.mp4")) {
                     console.log("Hết intro, chuyển bài main...");
-                    this.src = "main.mp3"; // Chuyển sang main.mp3
+                    this.src = "main.mp3"; 
                     this.load();
                     this.play().catch(e => console.log("Lỗi chuyển bài:", e));
                 }
@@ -396,7 +391,6 @@
             initCalendar();
         }
 
-        // --- GRAPHICS ---
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let w, h; const r = (min, max) => Math.random() * (max - min) + min;
@@ -444,10 +438,7 @@
             let count = 3;
 
             const music = document.getElementById('bg-music');
-            // Đảm bảo nhạc luôn chạy
-            if(music.paused) {
-                music.play().catch(e => console.log(e));
-            }
+            if(music.paused) music.play().catch(e => console.log(e));
 
             function tick() {
                 if(count > 0) {
@@ -465,31 +456,51 @@
             tick();
         }
 
-        // --- FIREWORKS SYSTEM ---
+        // --- HỆ THỐNG PHÁO HOA NÂNG CẤP (MULTIPLE EXPLOSION) ---
         const PHY = { g: 0.05, drag: 0.96 };
         let rockets = [], particles = [], fountains = [], drones = [];
         let showState = 'IDLE';
 
         class Particle {
-            constructor(x, y, hue, vx, vy, type) {
+            constructor(x, y, hue, vx, vy, type, generation = 1) {
                 this.x = x; this.y = y; this.hue = hue;
                 this.vx = vx; this.vy = vy;
                 this.type = type || 'spark';
+                this.generation = generation; // Thế hệ pháo (1: nổ lần đầu, 2: nổ lần hai...)
                 this.alpha = 1;
                 this.life = r(100, 200);
                 this.decay = type === 'sub_shell' ? r(0.005, 0.01) : r(0.008, 0.015);
-                if (this.type === 'smoke') { this.life = r(30, 60); this.decay = r(0.01, 0.03); this.size = r(2, 5); }
+                
+                if (this.type === 'smoke') { 
+                    this.life = r(30, 60); this.decay = r(0.01, 0.03); this.size = r(2, 5); 
+                } 
+                // Nếu là pháo con (sub-shell) thì cho nó rơi nhanh hơn chút để tạo hiệu ứng liễu rủ
+                if (this.type === 'sub_shell') {
+                    this.vy += 1; 
+                }
             }
+
             update() {
                 this.vx *= PHY.drag; this.vy *= PHY.drag; 
-                if (this.type === 'smoke') { this.vy -= 0.02; this.x += Math.sin(this.life * 0.1) * 0.5; this.size *= 1.02; } 
+                if (this.type === 'smoke') { 
+                    this.vy -= 0.02; this.x += Math.sin(this.life * 0.1) * 0.5; this.size *= 1.02; 
+                } 
                 else { this.vy += PHY.g; }
+                
                 this.x += this.vx; this.y += this.vy;
                 this.alpha -= this.decay;
+                
+                // Hiệu ứng nhấp nháy
                 if(this.type === 'spark' && Math.random() < 0.1) this.alpha = Math.random(); 
-                if (this.type === 'sub_shell' && (this.alpha <= 0.2 || this.life <= 0)) { this.explodeSecondTime(); this.alpha = 0; }
+                
+                // --- LOGIC NỔ LẦN 2 (QUAN TRỌNG) ---
+                if (this.type === 'sub_shell' && this.life <= 0) { 
+                    this.explodeSecondTime(); 
+                    this.alpha = 0; // Ẩn hạt cũ đi
+                }
                 this.life--;
             }
+
             draw(ctx) {
                 if (this.alpha <= 0) return;
                 ctx.save(); ctx.globalAlpha = this.alpha;
@@ -499,14 +510,32 @@
                 } else {
                     ctx.globalCompositeOperation = 'lighter';
                     ctx.fillStyle = `hsla(${this.hue}, 100%, 60%, ${this.alpha})`;
-                    ctx.beginPath(); ctx.arc(this.x, this.y, (this.type === 'core' ? 3 : (this.type==='sub_shell'?2:1.5)), 0, Math.PI * 2); ctx.fill();
+                    // Pháo to hơn một chút
+                    let size = (this.type === 'core' ? 3 : (this.type==='sub_shell'? 3 : 1.5));
+                    ctx.beginPath(); ctx.arc(this.x, this.y, size, 0, Math.PI * 2); ctx.fill();
                 }
                 ctx.restore();
             }
+
             explodeSecondTime() {
-                for (let i = 0; i < 15; i++) {
-                    const angle = r(0, Math.PI * 2); const speed = r(1, 4);
-                    particles.push(new Particle(this.x, this.y, this.hue + 20, Math.cos(angle)*speed, Math.sin(angle)*speed, 'spark'));
+                // Tạo âm thanh nổ lách tách
+                if(Math.random() < 0.5) AudioSys.play('crackle');
+
+                // Tăng số lượng hạt nổ ra để nhìn "dày" hơn
+                const count = r(20, 30); 
+                for (let i = 0; i < count; i++) {
+                    const angle = r(0, Math.PI * 2); 
+                    const speed = r(1, 5);
+                    // Đổi màu ngẫu nhiên cho sặc sỡ (Glitter effect)
+                    const newHue = (Math.random() < 0.5) ? this.hue : r(0, 360);
+                    
+                    particles.push(new Particle(
+                        this.x, this.y, 
+                        newHue, 
+                        Math.cos(angle)*speed, Math.sin(angle)*speed, 
+                        'spark', 
+                        this.generation + 1
+                    ));
                 }
             }
         }
@@ -528,22 +557,28 @@
                 ctx.beginPath(); ctx.moveTo(this.x, this.y); ctx.lineTo(this.x, this.y + 15); ctx.stroke(); ctx.restore();
             }
             explode() {
+                AudioSys.play('boom');
                 const shapeType = Math.random();
                 const cx = this.x; const cy = this.y; const hue = this.hue;
                 
                 for(let k=0; k<15; k++) particles.push(new Particle(cx, cy, 0, r(-2,2), r(-2,2), 'smoke'));
 
-                if (shapeType < 0.3) { // Sub-shell
-                    for (let i = 0; i < 30; i++) {
-                        const angle = r(0, Math.PI * 2); const speed = r(4, 10);
-                        particles.push(new Particle(cx, cy, hue, Math.cos(angle)*speed, Math.sin(angle)*speed, 'sub_shell'));
+                if (shapeType < 0.4) { // Tăng tỉ lệ ra pháo nổ 2 lần (Sub-shell)
+                    // Nổ lần 1: Bung ra các hạt "cái"
+                    for (let i = 0; i < 40; i++) {
+                        const angle = r(0, Math.PI * 2); const speed = r(3, 8);
+                        // Tạo hạt loại 'sub_shell' -> Loại này sẽ nổ tiếp khi hết life
+                        const p = new Particle(cx, cy, hue, Math.cos(angle)*speed, Math.sin(angle)*speed, 'sub_shell');
+                        p.life = r(30, 50); // Thời gian chờ nổ lần 2
+                        particles.push(p);
                     }
+                    // Thêm một ít hạt core cho đẹp
                     for (let i = 0; i < 20; i++) {
-                        const angle = r(0, Math.PI * 2); const speed = r(1, 5);
+                        const angle = r(0, Math.PI * 2); const speed = r(1, 4);
                         particles.push(new Particle(cx, cy, hue, Math.cos(angle)*speed, Math.sin(angle)*speed, 'core'));
                     }
                 }
-                else if (shapeType < 0.5) { // Ring
+                else if (shapeType < 0.6) { // Ring
                     const points = 5; const steps = points * 2;
                     for (let i = 0; i < 60; i++) {
                         const angle = (Math.PI * 2 / steps) * (i % steps); 
@@ -552,14 +587,7 @@
                         particles.push(new Particle(cx, cy, hue, Math.cos(angle - Math.PI/2) * v, Math.sin(angle - Math.PI/2) * v, 'core'));
                     }
                 }
-                else if (shapeType < 0.7) { // Core burst
-                    for (let i = 0; i < 60; i++) {
-                        const angle = (Math.PI*2 / 60) * i;
-                        const vx = Math.cos(angle) * 8; const vy = Math.sin(angle) * 2; 
-                        particles.push(new Particle(cx, cy, hue, vx, vy, 'core'));
-                    }
-                }
-                else { // Spark burst
+                else { // Spark burst thường
                     for (let i = 0; i < 100; i++) {
                         const angle = r(0, Math.PI * 2); const speed = r(1, 8);
                         particles.push(new Particle(cx, cy, hue, Math.cos(angle)*speed, Math.sin(angle)*speed, 'spark'));
@@ -833,18 +861,25 @@
             // --- XỬ LÝ HIỆU ỨNG SÓNG CHO CHỮ ---
             const finalTextContainer = document.querySelector('.final-text');
             let htmlContent = finalTextContainer.innerHTML;
-            let parts = htmlContent.split('<br>'); // Tách phần "HAPPY NEW YEAR" và phần "QUỲNH..."
-            let textToWave = parts[0]; // Chỉ lấy phần đầu để tạo sóng
+            let parts = htmlContent.split('<br>');
+            let textToWave = parts[0]; 
 
-            // Tách từng chữ cái và bọc vào thẻ span với animation-delay
             let wavedText = textToWave.split('').map((char, index) => {
-                if (char === ' ') return ' '; // Giữ nguyên khoảng trắng
-                let delay = index * 0.1; // Độ trễ tăng dần
+                if (char === ' ') return ' '; 
+                let delay = index * 0.1; 
                 return `<span class="wavy-char" style="animation-delay: ${delay}s">${char}</span>`;
             }).join('');
 
-            // Gép lại HTML mới
             finalTextContainer.innerHTML = wavedText + '<br>' + parts[1];
+
+            // --- HIỆN DÒNG CHỮ "TỚ THÍCH CẬU" SAU 2 GIÂY ---
+            setTimeout(() => {
+                const loveMsg = document.getElementById('love-message');
+                loveMsg.classList.add('show-love');
+                
+                // Bắn thêm pháo giấy khi chữ hiện lên (nếu muốn cầu kỳ hơn thì thêm logic pháo giấy)
+                spawnLoveConfetti();
+            }, 2500);
 
             // --- HIỆU ỨNG ICON BAY ---
             const icons = ['🌸', '✨', '🍀', '❤️', '🥰', '🦋', '🎁', '💖', '🌟'];
@@ -862,6 +897,22 @@
                 fs.appendChild(ic); 
                 setTimeout(() => ic.remove(), 6000);
             }, 200);
+        }
+        
+        // Hàm phụ tạo một ít hiệu ứng khi chữ "Tớ thích cậu" hiện
+        function spawnLoveConfetti() {
+            // Đơn giản là thêm nhiều icon tim bay lên
+            for(let i=0; i<20; i++){
+                setTimeout(() => {
+                    const ic = document.createElement('div'); 
+                    ic.className = 'final-icon';
+                    ic.innerText = '❤️';
+                    ic.style.left = (40 + Math.random()*20) + '%'; // Tập trung ở giữa
+                    ic.style.top = '60%'; 
+                    ic.style.animationDuration = (2 + Math.random()) + 's';
+                    document.getElementById('final-screen').appendChild(ic);
+                }, i * 100);
+            }
         }
 
     </script>
