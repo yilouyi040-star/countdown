@@ -72,7 +72,7 @@
         .cal-year { font-size: 1.2rem; font-weight: 700; color: #d63031; }
         .cal-lunar { font-size: 1.1rem; color: #636e72; margin-top: 5px; font-family: 'Dancing Script', cursive; }
 
-        /* --- STYLE ĐẶC BIỆT (Màu Đỏ Vàng) --- */
+        /* --- STYLE ĐẶC BIỆT --- */
         .calendar-page.special-date {
             background: #b30000;
             border: 2px solid #ffd700;
@@ -127,11 +127,13 @@
             background: rgba(0,0,0,0.4); z-index: 30;
             display: none; justify-content: center; align-items: center;
             transition: backdrop-filter 1s ease, background 1s ease;
+            overflow-y: auto; 
         }
         .envelopes-container {
             display: flex; gap: 30px; perspective: 1000px;
             flex-wrap: wrap; justify-content: center; width: 100%;
             padding-top: 50px;
+            padding-bottom: 50px; 
         }
         .envelope-wrapper {
             width: 120px; height: 180px;
@@ -229,16 +231,15 @@
         .wavy-char { display: inline-block; animation: textWave 2.5s ease-in-out infinite; }
         @keyframes textWave { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 
-        /* --- STYLE CHO DÒNG CHỮ "TỚ THÍCH CẬU" MỚI --- */
         #love-message {
-            font-family: 'Pacifico', cursive; /* Font chữ viết tay mềm mại */
+            font-family: 'Pacifico', cursive;
             font-size: 4.5rem;
             background: linear-gradient(to right, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 30px rgba(255, 20, 147, 0.6);
-            opacity: 0; /* Ẩn mặc định */
+            opacity: 0; 
             transform: scale(0.5);
             transition: all 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             margin-top: 20px;
@@ -254,6 +255,84 @@
             100% { transform: scale(1.1); text-shadow: 0 0 60px rgba(255, 0, 100, 1); filter: brightness(1.2); }
         }
 
+        /* --- NÚT BẤM CHUYỂN TRANG --- */
+        #redirect-btn {
+            margin-top: 40px;
+            padding: 15px 40px;
+            background: #fff;
+            color: #d63031;
+            border: 2px solid gold;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            opacity: 0; 
+            pointer-events: none;
+            transition: opacity 1.5s ease;
+            z-index: 100;
+            font-family: 'Montserrat', sans-serif;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+        #redirect-btn.show-btn {
+            opacity: 1;
+            pointer-events: auto;
+            animation: pulseBtn 2s infinite; 
+        }
+
+        /* --- TRANG CUSTOM MỚI (VẼ TRÁI TIM & TÂM TƯ) --- */
+        #my-custom-page {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 200;
+            display: none;
+            background: #fffdf5 url('https://www.transparenttextures.com/patterns/rice-paper-2.png'); /* Nền giấy dó */
+            flex-direction: column; 
+            overflow: hidden;
+        }
+
+        #heart-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            z-index: 1;
+            opacity: 1;
+            transition: opacity 1.5s ease; 
+        }
+        #heart-canvas.fade-out {
+            opacity: 0;
+        }
+
+        /* Nút lật trang trong phần nhật ký - MỚI */
+        #next-page-btn {
+            position: absolute;
+            bottom: 30px; 
+            right: 30px;
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: #d63031;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 210;
+            display: none; /* Mặc định ẩn */
+            transition: transform 0.3s;
+            border-bottom: 2px dashed #d63031;
+        }
+        #next-page-btn:hover {
+            transform: translateX(5px) scale(1.1);
+            color: #c0392b;
+        }
+        
+        /* Hiệu ứng chuyển trang cho Canvas */
+        .page-transition {
+            animation: fadePage 1s ease-in-out;
+        }
+        @keyframes fadePage {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ----------------------------------------------------------- */
+
         .floating-icon { 
             position: absolute; font-size: 2rem; pointer-events: none; z-index: 55;
             animation: floatAround 3s ease-out forwards;
@@ -263,7 +342,6 @@
             animation: floatIconFinal 4s infinite ease-in-out;
             opacity: 0; z-index: 52;
         }
-
         @keyframes floatAround {
             0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
             20% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1.2); }
@@ -315,7 +393,14 @@
 
     <div id="final-screen">
         <div class="final-text">HAPPY NEW YEAR<br>QUỲNH <span style="color:red">♥</span></div>
-        <div id="love-message">Tớ thích cậu ❤️</div>
+        <div id="love-message">love you❤️</div>
+        
+        <button id="redirect-btn" onclick="goToNextPage()">Xem tiếp bất ngờ nha 🎁</button>
+    </div>
+
+    <div id="my-custom-page">
+        <canvas id="heart-canvas"></canvas>
+        <button id="next-page-btn" onclick="nextDiaryPage()">Xem tiếp trang sau ➡</button>
     </div>
 
     <script>
@@ -329,11 +414,12 @@
         const LETTERS = [
             "🧧 Gửi yêu thương của tou năm 2026 Chúc Quỳnh một năm mới tràn đầy niềm vui,sức khỏe và những điều may mắn,lun xinh đẹp và dthw :3.Năm mới không chỉ là khởi đầu cho một hành trình mới mà còn là 1 cơ hội để người nhìn lại những khoảnh khắc đã trôi qua, trân trọng những gì Quỳnhh đã trải qua",
             "🎆 Cùng vượt qua khó khăn,không ngừng phát triển và đặt mục tiêu mà bản thân đề ra để giúp bản thân ngày càng tốt hơn.Hy vọng rằng Quình sẽ biết để ý bản thân mình hơn,giữ một trái tim kiên cường và tâm hồn lạc quan hong phải khócc vì những thứ không đáng. Nếu có khóc thì có tui ở đây dỗ, trêu cho cười:)))))",
-            "🚀 Cuộc sống không phải lúc nào cũng suôn sẻ,đôi lúc không như cau mong muốn và lm Quình bùn,nhưng mà hãy nhớ là mỗi thử thách hay thất bại là một bước đệm để cau dần trưởng thành hơn.Lun giữ được sự tích cực và nụ cười trên môi nhá vì nó dthw=))) :>",
+            "🚀 Cuộc sống không phải lúc nào cũng suôn sẻ,đôi lúc không như cau mong muốn và lm Quình bùn,nhưng mà hãy nhớ là mỗi thử thách hay thất bại là một bước đệm để cau dần trưởng thành hơn.Lun giữ được sự tích cực và nụ cười trên môi nhá vì nó dthw=))).Năm mới chúc Quỳnh luôn thành công và đạt được điều mà Quỳnh mong muốn, được đỗ vào c3 mong muốn và được trở thành một tiep vienn như Quỳnh yeu thichh, dù chặng đường có khó hay đầy trở ngại thì cũng đừng bỏ cuộc nhé.Hải lun ở đây cổ vũ,tiếp sức cho Quỳnh",
             "🥰 Chúc cô nàng:)) có năm mới ngập trànnnn niềm zui,lun biec yêu thw và để ý bản thân của mìnn và trân trọng hơnn . Một năm mới tuyệt zờii đang chờ ở phía trước đóo, nên là nhớ là hãy bỏ đi tất cả những muộn phiền của năm cũ và đón một năm mới thật là zuiiii <3",
-            "🥳 Qua năm cũng sắp tới chặng đường lên cấp 3 ròi,cùng nhau gánggg học thật giỏii, lun đạt điểm cao, đạt được điều mong ước trong năm học. Cảm ơn vì đã ở đây với bao sự rời đi của những người khác.Cảm ơn nhìu vì vẫn ở đây dù đôi lúc Hải gây ra nhiều phiền phức hay khó chịu mà cô nương zẫn ở đayy zới tui,toii gấc biết ơnnn vàa rấtt trân trọng những khoảnh khắc đẹp nàyyyyy .Cảm ơn rấttt rấttttttt nhiềuuuuuu,tiếp tục đi tiếp con đường sắp tới nhóoo,  iu💗"
+            "🥳 Qua năm cũng sắp tới chặng đường lên cấp 3 ròi,cùng nhau gánggg học thật giỏii, lun đạt điểm cao, đạt được điều mong ước trong năm học. Cảm ơn vì đã ở đây với bao sự rời đi của những người khác.Cảm ơn nhìu vì vẫn ở đây dù đôi lúc Hải gây ra nhiều phiền phức hay khó chịu mà cô nương zẫn ở đayy zới tui,toii gấc biết ơnnn vàa rấtt trân trọng những khoảnh khắc đẹp nàyyyyy .Cảm ơn rấttt rấttttttt nhiềuuuuuu,tiếp tục đi tiếp con đường sắp tới nhóoo,  iu💗",
+            "💌 Cuối cùng nè, lì xì này chứa đựng niềm tin của tớ dành cho cậu. Chúc Quỳnh năm 2026 sẽ là năm rực rỡ nhất, cười nhiều hơn và bớt suy nghĩ linh tinh đi nhé. Dù thế nào thì tớ vẫn luôn ở đây. Happy New Year! ❤️"
         ];
-
+        
         // --- AUDIO ---
         const AudioSys = {
             ctx: null,
@@ -358,7 +444,7 @@
                 } else if (type === 'boom') {
                     osc.frequency.setValueAtTime(120, t); osc.frequency.exponentialRampToValueAtTime(10, t + 0.5);
                     gain.gain.setValueAtTime(1.5, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
-                } else if (type === 'crackle') { // Âm thanh nổ lách tách mới
+                } else if (type === 'crackle') { 
                     osc.type = 'square';
                     osc.frequency.setValueAtTime(500, t);
                     osc.frequency.exponentialRampToValueAtTime(100, t + 0.1);
@@ -456,7 +542,7 @@
             tick();
         }
 
-        // --- HỆ THỐNG PHÁO HOA NÂNG CẤP (MULTIPLE EXPLOSION) ---
+        // --- HỆ THỐNG PHÁO HOA ---
         const PHY = { g: 0.05, drag: 0.96 };
         let rockets = [], particles = [], fountains = [], drones = [];
         let showState = 'IDLE';
@@ -466,7 +552,7 @@
                 this.x = x; this.y = y; this.hue = hue;
                 this.vx = vx; this.vy = vy;
                 this.type = type || 'spark';
-                this.generation = generation; // Thế hệ pháo (1: nổ lần đầu, 2: nổ lần hai...)
+                this.generation = generation;
                 this.alpha = 1;
                 this.life = r(100, 200);
                 this.decay = type === 'sub_shell' ? r(0.005, 0.01) : r(0.008, 0.015);
@@ -474,7 +560,6 @@
                 if (this.type === 'smoke') { 
                     this.life = r(30, 60); this.decay = r(0.01, 0.03); this.size = r(2, 5); 
                 } 
-                // Nếu là pháo con (sub-shell) thì cho nó rơi nhanh hơn chút để tạo hiệu ứng liễu rủ
                 if (this.type === 'sub_shell') {
                     this.vy += 1; 
                 }
@@ -490,13 +575,11 @@
                 this.x += this.vx; this.y += this.vy;
                 this.alpha -= this.decay;
                 
-                // Hiệu ứng nhấp nháy
                 if(this.type === 'spark' && Math.random() < 0.1) this.alpha = Math.random(); 
                 
-                // --- LOGIC NỔ LẦN 2 (QUAN TRỌNG) ---
                 if (this.type === 'sub_shell' && this.life <= 0) { 
                     this.explodeSecondTime(); 
-                    this.alpha = 0; // Ẩn hạt cũ đi
+                    this.alpha = 0; 
                 }
                 this.life--;
             }
@@ -510,7 +593,6 @@
                 } else {
                     ctx.globalCompositeOperation = 'lighter';
                     ctx.fillStyle = `hsla(${this.hue}, 100%, 60%, ${this.alpha})`;
-                    // Pháo to hơn một chút
                     let size = (this.type === 'core' ? 3 : (this.type==='sub_shell'? 3 : 1.5));
                     ctx.beginPath(); ctx.arc(this.x, this.y, size, 0, Math.PI * 2); ctx.fill();
                 }
@@ -518,24 +600,13 @@
             }
 
             explodeSecondTime() {
-                // Tạo âm thanh nổ lách tách
                 if(Math.random() < 0.5) AudioSys.play('crackle');
-
-                // Tăng số lượng hạt nổ ra để nhìn "dày" hơn
                 const count = r(20, 30); 
                 for (let i = 0; i < count; i++) {
                     const angle = r(0, Math.PI * 2); 
                     const speed = r(1, 5);
-                    // Đổi màu ngẫu nhiên cho sặc sỡ (Glitter effect)
                     const newHue = (Math.random() < 0.5) ? this.hue : r(0, 360);
-                    
-                    particles.push(new Particle(
-                        this.x, this.y, 
-                        newHue, 
-                        Math.cos(angle)*speed, Math.sin(angle)*speed, 
-                        'spark', 
-                        this.generation + 1
-                    ));
+                    particles.push(new Particle(this.x, this.y, newHue, Math.cos(angle)*speed, Math.sin(angle)*speed, 'spark', this.generation + 1));
                 }
             }
         }
@@ -563,22 +634,19 @@
                 
                 for(let k=0; k<15; k++) particles.push(new Particle(cx, cy, 0, r(-2,2), r(-2,2), 'smoke'));
 
-                if (shapeType < 0.4) { // Tăng tỉ lệ ra pháo nổ 2 lần (Sub-shell)
-                    // Nổ lần 1: Bung ra các hạt "cái"
+                if (shapeType < 0.4) { 
                     for (let i = 0; i < 40; i++) {
                         const angle = r(0, Math.PI * 2); const speed = r(3, 8);
-                        // Tạo hạt loại 'sub_shell' -> Loại này sẽ nổ tiếp khi hết life
                         const p = new Particle(cx, cy, hue, Math.cos(angle)*speed, Math.sin(angle)*speed, 'sub_shell');
-                        p.life = r(30, 50); // Thời gian chờ nổ lần 2
+                        p.life = r(30, 50); 
                         particles.push(p);
                     }
-                    // Thêm một ít hạt core cho đẹp
                     for (let i = 0; i < 20; i++) {
                         const angle = r(0, Math.PI * 2); const speed = r(1, 4);
                         particles.push(new Particle(cx, cy, hue, Math.cos(angle)*speed, Math.sin(angle)*speed, 'core'));
                     }
                 }
-                else if (shapeType < 0.6) { // Ring
+                else if (shapeType < 0.6) { 
                     const points = 5; const steps = points * 2;
                     for (let i = 0; i < 60; i++) {
                         const angle = (Math.PI * 2 / steps) * (i % steps); 
@@ -587,7 +655,7 @@
                         particles.push(new Particle(cx, cy, hue, Math.cos(angle - Math.PI/2) * v, Math.sin(angle - Math.PI/2) * v, 'core'));
                     }
                 }
-                else { // Spark burst thường
+                else { 
                     for (let i = 0; i < 100; i++) {
                         const angle = r(0, Math.PI * 2); const speed = r(1, 8);
                         particles.push(new Particle(cx, cy, hue, Math.cos(angle)*speed, Math.sin(angle)*speed, 'spark'));
@@ -801,11 +869,10 @@
 
             envContainer.innerHTML = '';
             
-            // --- TẠO 5 LÌ XÌ ---
-            for(let i=1; i<=5; i++) {
+            for(let i=1; i <= LETTERS.length; i++) {
                 const envWrapper = document.createElement('div');
                 envWrapper.className = 'envelope-wrapper';
-                envWrapper.style.animation = `flyIn 1s ease forwards ${i*0.2}s`;
+                envWrapper.style.animation = `flyIn 1s ease forwards ${i*0.15}s`;
                 
                 envWrapper.innerHTML = `
                     <div class="env-flap"></div>
@@ -843,8 +910,7 @@
                 currentEnvelopeEl.style.display = 'none'; 
             }
 
-            // --- KIỂM TRA ĐỦ 5 BAO MỚI HIỆN MÀN HÌNH CUỐI ---
-            if (openedCount === 5) setTimeout(showFinalScene, 1000);
+            if (openedCount === LETTERS.length) setTimeout(showFinalScene, 1000);
         }
 
         function showFinalScene() {
@@ -858,7 +924,6 @@
 
             document.getElementById('final-screen').style.display = 'flex';
             
-            // --- XỬ LÝ HIỆU ỨNG SÓNG CHO CHỮ ---
             const finalTextContainer = document.querySelector('.final-text');
             let htmlContent = finalTextContainer.innerHTML;
             let parts = htmlContent.split('<br>');
@@ -872,16 +937,18 @@
 
             finalTextContainer.innerHTML = wavedText + '<br>' + parts[1];
 
-            // --- HIỆN DÒNG CHỮ "TỚ THÍCH CẬU" SAU 2 GIÂY ---
             setTimeout(() => {
                 const loveMsg = document.getElementById('love-message');
                 loveMsg.classList.add('show-love');
-                
-                // Bắn thêm pháo giấy khi chữ hiện lên (nếu muốn cầu kỳ hơn thì thêm logic pháo giấy)
                 spawnLoveConfetti();
             }, 2500);
+            
+            // SAU 5 GIÂY HIỆN NÚT
+            setTimeout(() => {
+                const btn = document.getElementById('redirect-btn');
+                btn.classList.add('show-btn');
+            }, 5000);
 
-            // --- HIỆU ỨNG ICON BAY ---
             const icons = ['🌸', '✨', '🍀', '❤️', '🥰', '🦋', '🎁', '💖', '🌟'];
             const fs = document.getElementById('final-screen');
             
@@ -889,25 +956,21 @@
                 const ic = document.createElement('div'); 
                 ic.className = 'final-icon';
                 ic.innerText = icons[Math.floor(Math.random()*icons.length)];
-                
                 ic.style.left = Math.random()*100 + '%'; 
                 ic.style.top = (Math.random()*40 + 60) + '%'; 
-                
                 ic.style.animationDuration = (Math.random()*3 + 3) + 's';
                 fs.appendChild(ic); 
                 setTimeout(() => ic.remove(), 6000);
             }, 200);
         }
         
-        // Hàm phụ tạo một ít hiệu ứng khi chữ "Tớ thích cậu" hiện
         function spawnLoveConfetti() {
-            // Đơn giản là thêm nhiều icon tim bay lên
             for(let i=0; i<20; i++){
                 setTimeout(() => {
                     const ic = document.createElement('div'); 
                     ic.className = 'final-icon';
                     ic.innerText = '❤️';
-                    ic.style.left = (40 + Math.random()*20) + '%'; // Tập trung ở giữa
+                    ic.style.left = (40 + Math.random()*20) + '%'; 
                     ic.style.top = '60%'; 
                     ic.style.animationDuration = (2 + Math.random()) + 's';
                     document.getElementById('final-screen').appendChild(ic);
@@ -915,6 +978,233 @@
             }
         }
 
+        // --- LOGIC CHUYỂN TRANG & VẼ TRÁI TIM MỰC ---
+        
+        // ==========================================
+        // PHẦN NỘI DUNG 3 TRANG GIẤY
+        // ==========================================
+        const PAGE_CONTENT_1 = "Nhanh thật nhỉ, mới đó mà tụi mình đã đi được nửa chặng đường cuối cấp rồi. Có những ngày mọi thứ diễn ra rất bình thường, nhưng khi nhìn lại thì lại thấy đáng nhớ hơn mình tưởng. Tớ thấy may vì trong quãng thời gian này có cậu ở đó, không cần làm gì lớn lao, chỉ cần cùng đi qua những ngày đến lớp, cùng cười vài chuyện vu vơ cũng đủ thấy ấm. Phần đường phía trước vẫn còn, tớ chỉ mong tụi mình cứ giữ nhịp này, chậm thôi, nhưng thật, để sau này khi nhớ lại, mình có thể mỉm cười vì đã từng có một quãng thời gian rất đẹp bên nhau. Cho dù đôi lúc mình vụng về, không biết nói sao cho đúng, không giỏi thể hiện cảm xúc hay giữ mọi thứ thật hoàn hảo, nhưng tớ nghĩ điều quan trọng là sự chân thành mình dành cho nhau vẫn luôn ở đó. Có thể sẽ có những lúc hiểu lầm, những lúc im lặng, nhưng tớ tin rằng chỉ cần còn quan tâm, còn muốn ở lại, thì những điều chưa trọn vẹn cũng sẽ trở thành một phần rất đẹp của quãng thời gian này. Tớ trân trọng cách tụi mình đã và đang đồng hành, dù không hoàn hảo, nhưng rất thật.";
+        
+        const PAGE_CONTENT_2 = "Cũng chả biết từ khi nào nữa, Hải đã thích Quỳnh. Không phải kiểu rung động ồn ào hay một khoảnh khắc rõ ràng để nhớ, chỉ là dần dần thấy Quỳnh quan trọng hơn, để ý nhiều hơn những điều rất nhỏ. Có lúc Hải cũng vụng về, không biết nói sao cho đúng, nên chọn cách im lặng và ở cạnh theo cách an toàn nhất. Thích Quỳnh theo cách nhẹ nhàng, không đòi hỏi, không mong phải được đáp lại ngay, chỉ mong trong quãng thời gian mình còn đi chung nửa chặng đường này, mọi thứ vẫn giữ được sự ấm áp và chân thành như bây giờ. Nếu sau này có lúc nhìn lại, Hải chỉ hy vọng Quỳnh nhớ rằng đã từng có một người thương Quỳnh rất thật, theo cách chậm và hiền như thế.Rồi từ lúc nào đó, cảm giác ấy không còn là thích nữa, mà chậm rãi thành yêu, rồi dần thành thương. Thương theo cách rất hiền, không ồn ào, chỉ là muốn ở bên cạnh Quỳnh lâu hơn một chút, muốn cùng đi qua thêm nhiều ngày bình thường như thế này. Có những lúc Hải không nói gì, không làm gì đặc biệt, nhưng trong lòng luôn nghĩ nếu được ở cạnh Quỳnh thêm một đoạn đường nữa thì cũng đã đủ ấm. Không mong hứa hẹn xa xôi, chỉ mong hiện tại này kéo dài hơn một chút, để sự quan tâm, sự chân thành có thêm thời gian mà lớn lên.";
+        
+        const PAGE_CONTENT_3 = "Tớ xin lỗi vì đã chọn cách vòng vo như thế này, xin lỗi vì không đủ dũng khí để nói thẳng với cậu bằng lời của chính mình. Có lẽ vì tớ sợ, sợ rằng chỉ cần nói ra thôi, mối quan hệ mà tớ luôn trân trọng sẽ không còn giữ được sự tự nhiên vốn có. Tớ đã nhiều lần muốn nói, muốn hỏi, muốn bước thêm một chút về phía cậu, nhưng mỗi lần như vậy, tớ lại tự dừng mình lại, vì tớ không muốn trở thành gánh nặng trong cuộc sống của cậu. “In Love” của Low G là những rung động rất thật của tớ, là lúc tớ nhận ra mình quan tâm cậu nhiều hơn một người bạn, là những khoảnh khắc rất nhỏ thôi cũng đủ làm tớ vui, đủ để tớ mong chờ. Còn “Có Đôi Điều” của skiki là phần lặng nhất trong tớ, là những điều tớ cất đi, là sự im lặng kéo dài, là việc tớ chọn ở lại phía sau vì không muốn làm cậu khó xử. Hai bài hát ấy không phải ngẫu nhiên tớ gửi cho cậu, chúng là hai phần cảm xúc trong cùng một con người, vừa yêu thương, vừa sợ hãi, vừa muốn nói ra, vừa không dám đánh mất. Nếu có lúc nào đó cậu nghe và thấy lòng mình chùng xuống, mong cậu hiểu rằng đã từng có một người thương cậu rất nhiều, thương theo cách vụng về, lặng lẽ, không cần được đáp lại, chỉ mong cậu luôn bình yên, dù sau này người ở cạnh cậu có là ai đi nữa.";
+        
+        const FINAL_SIGNATURE = "- From Hải with love -";
+        
+        const DIARY_PAGES = [PAGE_CONTENT_1, PAGE_CONTENT_2, PAGE_CONTENT_3];
+        let currentPageIndex = 0;
+
+        function goToNextPage() {
+            document.getElementById('final-screen').style.display = 'none';
+            const customPage = document.getElementById('my-custom-page');
+            customPage.style.display = 'flex';
+            
+            showState = 'IDLE'; 
+            setTimeout(initInkHeart, 500);
+        }
+
+        // --- 1. VẼ TRÁI TIM BAN ĐẦU ---
+        function initInkHeart() {
+            const c = document.getElementById('heart-canvas');
+            const ctx = c.getContext('2d');
+            
+            c.width = window.innerWidth;
+            c.height = window.innerHeight;
+            
+            const cx = c.width / 2;
+            const cy = c.height / 2;
+            
+            let t = 0;
+            const speed = 0.025; 
+            const scale = Math.min(c.width, c.height) / 35; 
+            
+            function getHeartXY(val) {
+                let x = 16 * Math.pow(Math.sin(val), 3);
+                let y = -(13 * Math.cos(val) - 5 * Math.cos(2*val) - 2 * Math.cos(3*val) - Math.cos(4*val));
+                return { x: cx + x * scale, y: cy + y * scale };
+            }
+
+            function draw() {
+                if (t > Math.PI * 2) {
+                    c.classList.add('fade-out'); // Biến mất trái tim
+                    setTimeout(() => {
+                         ctx.clearRect(0, 0, c.width, c.height);
+                         c.classList.remove('fade-out'); 
+                         // Bắt đầu vào Trang 1
+                         currentPageIndex = 0;
+                         renderDiaryPage(currentPageIndex);
+                    }, 1500);
+                    return; 
+                }
+
+                for (let i = 0; i < 3; i++) { 
+                    t += speed / 5;
+                    if (t > Math.PI * 2) break;
+                    const point = getHeartXY(t);
+                    const radius = (Math.random() * 10 + 5) * (1 + Math.sin(t * 5) * 0.2); 
+                    ctx.globalAlpha = Math.random() * 0.3 + 0.1; 
+                    ctx.fillStyle = `hsl(${350 + Math.random()*20}, 80%, ${40 + Math.random()*20}%)`;
+                    ctx.beginPath();
+                    ctx.arc(point.x + (Math.random()-0.5)*5, point.y + (Math.random()-0.5)*5, radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // --- 2. HÀM XỬ LÝ CHUYỂN TRANG ---
+        function nextDiaryPage() {
+            // Ẩn nút
+            document.getElementById('next-page-btn').style.display = 'none';
+            currentPageIndex++;
+            
+            const c = document.getElementById('heart-canvas');
+            // Hiệu ứng mờ đi để chuyển trang
+            c.style.opacity = 0;
+            
+            setTimeout(() => {
+                const ctx = c.getContext('2d');
+                ctx.clearRect(0, 0, c.width, c.height); // Xóa trắng
+                renderDiaryPage(currentPageIndex); // Vẽ trang mới
+                c.style.opacity = 1; // Hiện lại
+            }, 500);
+        }
+
+        // --- 3. HỆ THỐNG KẺ DÒNG & VIẾT CHỮ (ĐƯỢC GỌI MỖI TRANG) ---
+        function renderDiaryPage(pageIndex) {
+            const c = document.getElementById('heart-canvas');
+            const ctx = c.getContext('2d');
+            const cW = c.width; 
+            const cH = c.height;
+
+            const lineHeight = 50; 
+            const startY = cH * 0.15; 
+            const maxWidth = cW * 0.9;
+            const startX = (cW - maxWidth) / 2;
+            const endX = startX + maxWidth;
+            
+            const numLines = Math.floor((cH * 0.7) / lineHeight);
+            
+            // A. VẼ DÒNG KẺ
+            let currentLineIndex = 0;
+            let currentLineX = startX;
+            const lineDrawSpeed = 25; // Tăng tốc độ kẻ dòng một chút
+
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = "rgba(50, 50, 50, 0.2)"; 
+            ctx.lineCap = "round";
+
+            function animateLines() {
+                if (currentLineIndex >= numLines) {
+                    // Kẻ xong dòng thì viết chữ tương ứng với pageIndex
+                    setTimeout(() => startWritingText(ctx, startX, endX, startY, lineHeight, DIARY_PAGES[pageIndex]), 300);
+                    return;
+                }
+
+                ctx.beginPath();
+                ctx.moveTo(currentLineX, startY + currentLineIndex * lineHeight);
+                currentLineX += lineDrawSpeed;
+                
+                if (currentLineX < endX) {
+                     ctx.lineTo(currentLineX, startY + currentLineIndex * lineHeight);
+                     ctx.stroke();
+                     requestAnimationFrame(animateLines);
+                } else {
+                    ctx.lineTo(endX, startY + currentLineIndex * lineHeight);
+                    ctx.stroke();
+                    currentLineIndex++;
+                    currentLineX = startX;
+                    requestAnimationFrame(animateLines);
+                }
+            }
+            animateLines();
+        }
+
+        function startWritingText(ctx, startX, endX, startY, lineHeight, textContent) {
+            const fontSize = Math.min(30, window.innerWidth / 15);
+            ctx.font = `${fontSize}px 'Patrick Hand', cursive`;
+            ctx.fillStyle = "#2c3e50";
+            ctx.textBaseline = "bottom";
+
+            // Tách chữ để xuống dòng
+            const words = textContent.split(' ');
+            let lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                let word = words[i];
+                let width = ctx.measureText(currentLine + " " + word).width;
+                if (width < (endX - startX)) {
+                    currentLine += " " + word;
+                } else {
+                    lines.push(currentLine);
+                    currentLine = word;
+                }
+            }
+            lines.push(currentLine);
+
+            // Bắt đầu gõ
+            let lineIdx = 0;
+            let charIdx = 0;
+            let cursorX = startX;
+            let cursorY = startY + lineHeight;
+
+            function typeWriter() {
+                if (lineIdx < lines.length) {
+                    const currentString = lines[lineIdx];
+                    if (charIdx < currentString.length) {
+                        const char = currentString[charIdx];
+                        ctx.fillText(char, cursorX, cursorY - 5);
+                        cursorX += ctx.measureText(char).width;
+                        charIdx++;
+                        setTimeout(typeWriter, Math.random() * 30 + 30); // Tốc độ gõ
+                    } else {
+                        lineIdx++;
+                        charIdx = 0;
+                        cursorX = startX;
+                        cursorY += lineHeight;
+                        setTimeout(typeWriter, 300);
+                    }
+                } else {
+                    // KHI VIẾT XONG TRANG NÀY
+                    handlePageFinished(ctx, startX, endX, cursorY, lineHeight, fontSize);
+                }
+            }
+            typeWriter();
+        }
+
+        function handlePageFinished(ctx, startX, endX, lastY, lineHeight, fontSize) {
+            // Kiểm tra xem còn trang không
+            if (currentPageIndex < DIARY_PAGES.length - 1) {
+                // Chưa hết -> Hiện nút chuyển trang
+                const btn = document.getElementById('next-page-btn');
+                btn.style.display = 'block';
+                btn.classList.add('pulse-btn'); 
+            } else {
+                // Đã là trang cuối -> Ký tên
+                setTimeout(() => drawSignature(ctx, startX, endX, lastY, lineHeight, fontSize), 500);
+            }
+        }
+
+        function drawSignature(ctx, startX, endX, lastY, lineHeight, fontSize) {
+            ctx.font = `${fontSize * 1.5}px 'Dancing Script', cursive`;
+            ctx.fillStyle = "#c0392b";
+            const sigWidth = ctx.measureText(FINAL_SIGNATURE).width;
+            let sigX = (startX + endX) / 2 - sigWidth / 2;
+            let sigY = lastY + lineHeight * 2;
+            
+            let sIdx = 0;
+            function typeSig() {
+                if (sIdx < FINAL_SIGNATURE.length) {
+                    ctx.fillText(FINAL_SIGNATURE[sIdx], sigX, sigY);
+                    sigX += ctx.measureText(FINAL_SIGNATURE[sIdx]).width;
+                    sIdx++;
+                    setTimeout(typeSig, 70);
+                }
+            }
+            typeSig();
+        }
     </script>
 </body>
 </html>
