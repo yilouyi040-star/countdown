@@ -9,25 +9,32 @@
         /* --- CẤU HÌNH CHUNG --- */
         body {
             margin: 0; overflow: hidden;
-            background: #050505;
+            background: #000;
             font-family: 'Montserrat', sans-serif;
             height: 100vh; color: white;
             user-select: none; -webkit-tap-highlight-color: transparent;
             transition: background 1.5s ease;
         }
 
-        /* --- SÂN KHẤU & ÁNH SÁNG --- */
-        #stage-lights {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 60%;
-            background: radial-gradient(circle at 20% 100%, rgba(255, 0, 100, 0.2), transparent 40%),
-                        radial-gradient(circle at 80% 100%, rgba(0, 100, 255, 0.2), transparent 40%);
-            z-index: 2; pointer-events: none;
-            animation: lightShift 4s infinite alternate;
+        /* --- SÂN KHẤU PHÁO HOA --- */
+        .stage-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; z-index: 1;
         }
-        @keyframes lightShift { 0% { opacity: 0.4; } 100% { opacity: 0.7; } }
-
-        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-        canvas { display: block; }
+        .canvas-container {
+            width: 100%; height: 100%;
+            transition: filter 0.3s;
+        }
+        canvas {
+            position: absolute; top: 0; left: 0;
+            mix-blend-mode: lighten;
+        }
+        
+        /* --- CANVAS CHO DRONE --- */
+        #drone-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2; pointer-events: none;
+        }
 
         /* --- MÀN HÌNH BẮT ĐẦU --- */
         #start-overlay {
@@ -72,10 +79,8 @@
         .cal-year { font-size: 1.2rem; font-weight: 700; color: #d63031; }
         .cal-lunar { font-size: 1.1rem; color: #636e72; margin-top: 5px; font-family: 'Dancing Script', cursive; }
 
-        /* --- STYLE ĐẶC BIỆT --- */
         .calendar-page.special-date {
-            background: #b30000;
-            border: 2px solid #ffd700;
+            background: #b30000; border: 2px solid #ffd700;
             background-image: radial-gradient(#d63031 15%, transparent 16%);
         }
         .calendar-page.special-date::before { background: #800000; border-bottom: 2px dashed gold; }
@@ -132,23 +137,18 @@
         .envelopes-container {
             display: flex; gap: 30px; perspective: 1000px;
             flex-wrap: wrap; justify-content: center; width: 100%;
-            padding-top: 50px;
-            padding-bottom: 50px; 
+            padding-top: 50px; padding-bottom: 50px; 
         }
         .envelope-wrapper {
-            width: 120px; height: 180px;
-            position: relative;
-            cursor: pointer;
-            transform-style: preserve-3d;
-            transition: transform 0.3s ease;
+            width: 120px; height: 180px; position: relative; cursor: pointer;
+            transform-style: preserve-3d; transition: transform 0.3s ease;
         }
         .envelope-wrapper:hover { transform: translateY(-10px); }
 
         .env-body {
             position: absolute; bottom: 0; left: 0; width: 100%; height: 85%;
             background: #c0392b; border-radius: 0 0 10px 10px;
-            border: 2px solid #b33939; border-top: none;
-            z-index: 2; overflow: hidden;
+            border: 2px solid #b33939; border-top: none; z-index: 2; overflow: hidden;
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
         .env-body::before { 
@@ -162,19 +162,14 @@
         }
         .env-flap {
             position: absolute; top: 0; left: 0; width: 100%; height: 15%; 
-            background: #d63031;
-            border-radius: 10px 10px 0 0;
+            background: #d63031; border-radius: 10px 10px 0 0;
             border: 2px solid #b33939; border-bottom: none;
-            transform-origin: bottom;
-            z-index: 3;
-            transition: transform 0.4s ease-in-out;
-            border-bottom: 2px solid gold;
+            transform-origin: bottom; z-index: 3;
+            transition: transform 0.4s ease-in-out; border-bottom: 2px solid gold;
         }
         .env-paper {
             position: absolute; top: 15%; left: 10px; right: 10px; height: 70%;
-            background: #fffdf5;
-            z-index: 1; 
-            border-radius: 5px;
+            background: #fffdf5; z-index: 1; border-radius: 5px;
             transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             display: flex; justify-content: center; align-items: center;
@@ -194,18 +189,13 @@
         #letter-modal {
             position: absolute; top: 50%; left: 50%; 
             transform: translate(-50%, -50%) rotateY(90deg); 
-            width: 85%; max-width: 600px; max-height: 70vh; 
-            overflow-y: auto;
+            width: 85%; max-width: 600px; max-height: 70vh; overflow-y: auto;
             background: #fffdf5 url('https://www.transparenttextures.com/patterns/cream-paper.png');
             padding: 25px; border-radius: 15px;
             box-shadow: 0 30px 60px rgba(0,0,0,0.9);
-            font-family: 'Patrick Hand', cursive; 
-            font-size: 1.5rem; 
-            color: #2c3e50;
-            z-index: 40; 
-            text-align: center; line-height: 1.5;
-            border: 6px double #d63031;
-            opacity: 0;
+            font-family: 'Patrick Hand', cursive; font-size: 1.5rem; color: #2c3e50;
+            z-index: 40; text-align: center; line-height: 1.5;
+            border: 6px double #d63031; opacity: 0;
             transition: transform 0.5s ease-out, opacity 0.5s;
         }
         #letter-modal.show-flip { transform: translate(-50%, -50%) rotateY(0deg); opacity: 1; }
@@ -213,8 +203,7 @@
             margin-top: 20px; padding: 10px 30px; background: #d63031; color: #fff;
             border: none; border-radius: 8px; cursor: pointer; font-size: 1.2rem;
             box-shadow: 0 5px 15px rgba(214, 48, 49, 0.4);
-            font-family: 'Montserrat', sans-serif;
-            display: inline-block;
+            font-family: 'Montserrat', sans-serif; display: inline-block;
         }
 
         /* MÀN HÌNH CUỐI */
@@ -225,132 +214,67 @@
         }
         .final-text {
             font-size: 3.5rem; font-weight: 900; color: #fff; text-align: center;
-            text-shadow: 0 0 20px #ff0055;
-            margin-bottom: 20px;
+            text-shadow: 0 0 20px #ff0055; margin-bottom: 20px;
         }
         .wavy-char { display: inline-block; animation: textWave 2.5s ease-in-out infinite; }
         @keyframes textWave { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 
         #love-message {
-            font-family: 'Pacifico', cursive;
-            font-size: 4.5rem;
+            font-family: 'Pacifico', cursive; font-size: 4.5rem;
             background: linear-gradient(to right, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
             text-shadow: 0 0 30px rgba(255, 20, 147, 0.6);
-            opacity: 0; 
-            transform: scale(0.5);
+            opacity: 0; transform: scale(0.5);
             transition: all 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            margin-top: 20px;
-            z-index: 60;
+            margin-top: 20px; z-index: 60;
         }
-        #love-message.show-love {
-            opacity: 1;
-            transform: scale(1);
-            animation: heartBeat 1.2s infinite alternate;
-        }
+        #love-message.show-love { opacity: 1; transform: scale(1); animation: heartBeat 1.2s infinite alternate; }
         @keyframes heartBeat {
             0% { transform: scale(1); text-shadow: 0 0 30px rgba(255, 20, 147, 0.6); }
             100% { transform: scale(1.1); text-shadow: 0 0 60px rgba(255, 0, 100, 1); filter: brightness(1.2); }
         }
 
-        /* --- NÚT BẤM CHUYỂN TRANG --- */
         #redirect-btn {
-            margin-top: 40px;
-            padding: 15px 40px;
-            background: #fff;
-            color: #d63031;
-            border: 2px solid gold;
-            border-radius: 30px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            cursor: pointer;
-            opacity: 0; 
-            pointer-events: none;
-            transition: opacity 1.5s ease;
-            z-index: 100;
-            font-family: 'Montserrat', sans-serif;
+            margin-top: 40px; padding: 15px 40px; background: #fff; color: #d63031;
+            border: 2px solid gold; border-radius: 30px;
+            font-size: 1.2rem; font-weight: 700; cursor: pointer;
+            opacity: 0; pointer-events: auto; transition: opacity 1.5s ease;
+            z-index: 100; font-family: 'Montserrat', sans-serif;
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
         }
-        #redirect-btn.show-btn {
-            opacity: 1;
-            pointer-events: auto;
-            animation: pulseBtn 2s infinite; 
-        }
+        #redirect-btn.show-btn { opacity: 1; animation: pulseBtn 2s infinite; }
 
-        /* --- TRANG CUSTOM MỚI (VẼ TRÁI TIM & TÂM TƯ) --- */
+        /* --- TRANG CUSTOM MỚI (CANVAS TRẮNG) --- */
         #my-custom-page {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 200;
-            display: none;
-            background: #fffdf5 url('https://www.transparenttextures.com/patterns/rice-paper-2.png'); /* Nền giấy dó */
-            flex-direction: column; 
-            overflow: hidden;
+            z-index: 9999; /* Đảm bảo nằm trên cùng */
+            display: none; 
+            background: #fff; /* Đổi thành nền trắng */
+        }
+        #final-custom-canvas {
+            display: block; width: 100%; height: 100%;
         }
 
-        #heart-canvas {
-            position: absolute;
-            top: 0; left: 0;
-            z-index: 1;
-            opacity: 1;
-            transition: opacity 1.5s ease; 
-        }
-        #heart-canvas.fade-out {
-            opacity: 0;
-        }
-
-        /* Nút lật trang trong phần nhật ký - MỚI */
-        #next-page-btn {
-            position: absolute;
-            bottom: 30px; 
-            right: 30px;
-            padding: 10px 20px;
-            background: transparent;
-            border: none;
-            color: #d63031;
-            font-family: 'Patrick Hand', cursive;
-            font-size: 1.5rem;
-            cursor: pointer;
-            z-index: 210;
-            display: none; /* Mặc định ẩn */
-            transition: transform 0.3s;
-            border-bottom: 2px dashed #d63031;
-        }
-        #next-page-btn:hover {
-            transform: translateX(5px) scale(1.1);
-            color: #c0392b;
-        }
-        
-        /* Hiệu ứng chuyển trang cho Canvas */
-        .page-transition {
-            animation: fadePage 1s ease-in-out;
-        }
-        @keyframes fadePage {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* ----------------------------------------------------------- */
-
-        .floating-icon { 
-            position: absolute; font-size: 2rem; pointer-events: none; z-index: 55;
-            animation: floatAround 3s ease-out forwards;
-        }
         .final-icon {
             position: absolute; font-size: 2.5rem;
             animation: floatIconFinal 4s infinite ease-in-out;
             opacity: 0; z-index: 52;
         }
-        @keyframes floatAround {
-            0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
-            20% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1.2); }
-            100% { transform: translate(var(--tx-end), var(--ty-end)) scale(0); opacity: 0; }
-        }
         @keyframes floatIconFinal { 
             0% { transform: translateY(100px) rotate(0deg); opacity: 0; } 
             20% { opacity: 1; } 80% { opacity: 1; }
             100% { transform: translateY(-200px) rotate(20deg); opacity: 0; } 
+        }
+
+        /* CSS CHO DRONE ICONS */
+        .floating-icon { 
+            position: absolute; font-size: 2rem; pointer-events: none; z-index: 55;
+            animation: floatAround 3s ease-out forwards;
+        }
+        @keyframes floatAround {
+            0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
+            20% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1.2); }
+            100% { transform: translate(var(--tx-end), var(--ty-end)) scale(0); opacity: 0; }
         }
 
         @media (max-width: 480px) {
@@ -360,11 +284,11 @@
             .final-text { font-size: 2.2rem !important; } 
             #love-message { font-size: 3rem !important; }
         }
-
-        #bg-music { position: absolute; width: 1px; height: 1px; opacity: 0; z-index: -1; pointer-events: none; }
+        
     </style>
 </head>
 <body>
+
     <audio id="bg-music" playsinline style="display:none">
         <source src="intro.mp4" type="audio/mp4">
         <source src="intro.mp3" type="audio/mpeg">
@@ -374,11 +298,16 @@
         <button class="start-btn" onclick="startExperience()">Chạm vào đây nèee🧧</button>
     </div>
 
-    <div id="stage-lights"></div>
-    <div id="canvas-container"><canvas id="canvas"></canvas></div>
+    <div class="stage-container">
+        <div class="canvas-container">
+            <canvas id="drone-canvas"></canvas>
+            
+            <canvas id="trails-canvas"></canvas>
+            <canvas id="main-canvas"></canvas>
+        </div>
+    </div>
 
     <div id="calendar-container"></div>
-    
     <div id="countdown-container"></div>
 
     <button id="lixi-btn">Nhận Lì Xì Nè 🧧</button>
@@ -394,17 +323,15 @@
     <div id="final-screen">
         <div class="final-text">HAPPY NEW YEAR<br>QUỲNH <span style="color:red">♥</span></div>
         <div id="love-message">love you❤️</div>
-        
-        <button id="redirect-btn" onclick="goToNextPage()">Xem tiếp bất ngờ nha 🎁</button>
+        <button id="redirect-btn" onclick="goToNextPage()">Xem tiếp nhé🎁</button>
     </div>
 
     <div id="my-custom-page">
-        <canvas id="heart-canvas"></canvas>
-        <button id="next-page-btn" onclick="nextDiaryPage()">Xem tiếp trang sau ➡</button>
+        <canvas id="final-custom-canvas"></canvas>
     </div>
 
     <script>
-        // --- DATA ---
+        // --- CẤU HÌNH DỮ LIỆU ---
         const DATES = [
             { d: 28, m: 12, y: 2025, l: "..." },
             { d: 29, m: 12, y: 2025, l: "Đêm Giao Thừa" },
@@ -419,8 +346,8 @@
             "🥳 Qua năm cũng sắp tới chặng đường lên cấp 3 ròi,cùng nhau gánggg học thật giỏii, lun đạt điểm cao, đạt được điều mong ước trong năm học. Cảm ơn vì đã ở đây với bao sự rời đi của những người khác.Cảm ơn nhìu vì vẫn ở đây dù đôi lúc Hải gây ra nhiều phiền phức hay khó chịu mà cô nương zẫn ở đayy zới tui,toii gấc biết ơnnn vàa rấtt trân trọng những khoảnh khắc đẹp nàyyyyy .Cảm ơn rấttt rấttttttt nhiềuuuuuu,tiếp tục đi tiếp con đường sắp tới nhóoo,  iu💗",
             "💌 Cuối cùng nè, lì xì này chứa đựng niềm tin của tớ dành cho cậu. Chúc Quỳnh năm 2026 sẽ là năm rực rỡ nhất, cười nhiều hơn và bớt suy nghĩ linh tinh đi nhé. Dù thế nào thì tớ vẫn luôn ở đây. Happy New Year! ❤️"
         ];
-        
-        // --- AUDIO ---
+
+        // --- HỆ THỐNG ÂM THANH CƠ BẢN ---
         const AudioSys = {
             ctx: null,
             init() { 
@@ -466,24 +393,16 @@
             music.play().catch(e => console.log("Lỗi phát nhạc:", e));
 
             music.onended = function() {
-                if (this.currentSrc.includes("intro.mp4") || this.src.includes("intro.mp4")) {
-                    console.log("Hết intro, chuyển bài main...");
-                    this.src = "main.mp3"; 
-                    this.load();
-                    this.play().catch(e => console.log("Lỗi chuyển bài:", e));
+                if (this.src.includes("intro.mp4") || this.currentSrc.includes("intro.mp4")) {
+                    this.src = "main.mp3"; this.load(); this.play().catch(e=>{});
+                } else if (this.src.includes("main.mp3") || this.currentSrc.includes("main.mp3")) {
+                    this.src = "codoidieu.mp3"; this.loop = true; this.load(); this.play().catch(e=>{});
                 }
             };
-            
             initCalendar();
         }
 
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        let w, h; const r = (min, max) => Math.random() * (max - min) + min;
-        function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resize); resize();
-
-        // --- CALENDAR LOGIC ---
+        // --- LỊCH ---
         const calContainer = document.getElementById('calendar-container');
         let dateIndex = 0;
         function initCalendar() {
@@ -491,11 +410,7 @@
                 const d = DATES[i];
                 const el = document.createElement('div');
                 el.className = 'calendar-page'; el.style.zIndex = 100 - i;
-                
-                if ( (d.d == 29) || (d.d == "01" && d.m == "01") ) {
-                    el.classList.add('special-date');
-                }
-
+                if ( (d.d == 29) || (d.d == "01" && d.m == "01") ) el.classList.add('special-date');
                 el.innerHTML = `<div class="cal-month">Tháng ${d.m}</div><div class="cal-date">${d.d}</div><div class="cal-year">${d.y}</div><div class="cal-lunar">${d.l}</div>`;
                 calContainer.appendChild(el);
             }
@@ -505,29 +420,22 @@
         function tearNextPage() {
             if (dateIndex < DATES.length - 1) { 
                 const pageToTear = calContainer.children[DATES.length - 1 - dateIndex];
-                if(pageToTear) {
-                    pageToTear.classList.add('tearing');
-                    AudioSys.play('launch'); 
-                }
-                dateIndex++;
-                setTimeout(tearNextPage, 1000); 
+                if(pageToTear) { pageToTear.classList.add('tearing'); AudioSys.play('launch'); }
+                dateIndex++; setTimeout(tearNextPage, 1000); 
             } else {
                 setTimeout(startCountdown, 800);
             }
         }
 
-        // --- COUNTDOWN LOGIC ---
+        // --- ĐẾM NGƯỢC ---
         function startCountdown() {
             calContainer.style.display = 'none';
             const countDiv = document.getElementById('countdown-container');
             countDiv.style.display = 'flex';
             let count = 3;
 
-            const music = document.getElementById('bg-music');
-            if(music.paused) music.play().catch(e => console.log(e));
-
             function tick() {
-                if(count > 0) {
+                if (count > 0) {
                     countDiv.innerText = count;
                     countDiv.style.animation = 'none';
                     countDiv.offsetHeight; 
@@ -536,150 +444,492 @@
                     setTimeout(tick, 1000);
                 } else {
                     countDiv.style.display = 'none';
+                    
+                    // --- GIAI ĐOẠN 1: BẮN PHÁO HOA ---
                     startFireworksShow();
+
+                    // --- GIAI ĐOẠN 2: CHỜ 30 GIÂY RỒI SANG DRONE ---
+                    setTimeout(() => {
+                        store.setState({
+                            config: { ...store.state.config, autoLaunch: false }
+                        });
+                        showState = 'DRONE_1'; 
+                        if (typeof droneLoop === 'function') {
+                            droneLoop();
+                        }
+                    }, 30000); 
                 }
             }
             tick();
         }
 
-        // --- HỆ THỐNG PHÁO HOA ---
+        // --- PHẦN PHÁO HOA NÂNG CẤP (GIỮ NGUYÊN) ---
+        (function(global){'use strict';var key={fullscreenEnabled:0,fullscreenElement:1,requestFullscreen:2,exitFullscreen:3,fullscreenchange:4,fullscreenerror:5};var webkit=['webkitFullscreenEnabled','webkitFullscreenElement','webkitRequestFullscreen','webkitExitFullscreen','webkitfullscreenchange','webkitfullscreenerror'];var moz=['mozFullScreenEnabled','mozFullScreenElement','mozRequestFullScreen','mozCancelFullScreen','mozfullscreenchange','mozfullscreenerror'];var ms=['msFullscreenEnabled','msFullscreenElement','msRequestFullscreen','msExitFullscreen','MSFullscreenChange','MSFullscreenError'];var doc=typeof window!=='undefined'&&typeof window.document!=='undefined'?window.document:{};var vendor='fullscreenEnabled'in doc&&Object.keys(key)||webkit[0]in doc&&webkit||moz[0]in doc&&moz||ms[0]in doc&&ms||[];var fscreen={requestFullscreen:function requestFullscreen(element){return element[vendor[key.requestFullscreen]]();},requestFullscreenFunction:function requestFullscreenFunction(element){return element[vendor[key.requestFullscreen]];},get exitFullscreen(){return doc[vendor[key.exitFullscreen]].bind(doc);},addEventListener:function addEventListener(type,handler,options){return doc.addEventListener(vendor[key[type]],handler,options);},removeEventListener:function removeEventListener(type,handler){return doc.removeEventListener(vendor[key[type]],handler);},get fullscreenEnabled(){return Boolean(doc[vendor[key.fullscreenEnabled]]);},set fullscreenEnabled(val){},get fullscreenElement(){return doc[vendor[key.fullscreenElement]];},set fullscreenElement(val){},get onfullscreenchange(){return doc[('on'+vendor[key.fullscreenchange]).toLowerCase()];},set onfullscreenchange(handler){return doc[('on'+vendor[key.fullscreenchange]).toLowerCase()]=handler;},get onfullscreenerror(){return doc[('on'+vendor[key.fullscreenerror]).toLowerCase()];},set onfullscreenerror(handler){return doc[('on'+vendor[key.fullscreenerror]).toLowerCase()]=handler;}};global.fscreen=fscreen;})(window);
+
+        const MyMath = (function MyMathFactory(Math) {
+            const MyMath = {};
+            MyMath.toDeg = 180 / Math.PI; MyMath.toRad = Math.PI / 180; MyMath.halfPI = Math.PI / 2; MyMath.twoPI = Math.PI * 2;
+            MyMath.dist = (width, height) => { return Math.sqrt(width * width + height * height); };
+            MyMath.pointDist = (x1, y1, x2, y2) => { const distX = x2 - x1; const distY = y2 - y1; return Math.sqrt(distX * distX + distY * distY); };
+            MyMath.angle = (width, height) => MyMath.halfPI + Math.atan2(height, width);
+            MyMath.pointAngle = (x1, y1, x2, y2) => MyMath.halfPI + Math.atan2(y2 - y1, x2 - x1);
+            MyMath.splitVector = (speed, angle) => ({ x: Math.sin(angle) * speed, y: -Math.cos(angle) * speed, });
+            MyMath.random = (min, max) => Math.random() * (max - min) + min;
+            MyMath.randomInt = (min, max) => ((Math.random() * (max - min + 1)) | 0) + min;
+            MyMath.randomChoice = function randomChoice(choices) { if (arguments.length === 1 && Array.isArray(choices)) { return choices[(Math.random() * choices.length) | 0]; } return arguments[(Math.random() * arguments.length) | 0]; };
+            MyMath.clamp = function clamp(num, min, max) { return Math.min(Math.max(num, min), max); };
+            return MyMath;
+        })(Math);
+
+        const Ticker = (function TickerFactory(window) {
+            "use strict"; const Ticker = {};
+            Ticker.addListener = function addListener(callback) { if (typeof callback !== "function") throw "Ticker error"; listeners.push(callback); if (!started) { started = true; queueFrame(); } };
+            let started = false; let lastTimestamp = 0; let listeners = [];
+            function queueFrame() { if (window.requestAnimationFrame) { requestAnimationFrame(frameHandler); } else { webkitRequestAnimationFrame(frameHandler); } }
+            function frameHandler(timestamp) { let frameTime = timestamp - lastTimestamp; lastTimestamp = timestamp; if (frameTime < 0) { frameTime = 17; } else if (frameTime > 68) { frameTime = 68; } listeners.forEach((listener) => listener.call(window, frameTime, frameTime / 16.6667)); queueFrame(); }
+            return Ticker;
+        })(window);
+
+        const Stage = (function StageFactory(window, document, Ticker) {
+            "use strict"; let lastTouchTimestamp = 0;
+            function Stage(canvas) {
+                if (typeof canvas === "string") canvas = document.getElementById(canvas);
+                this.canvas = canvas; this.ctx = canvas.getContext("2d"); this.canvas.style.touchAction = "none";
+                this.speed = 1; this.dpr = (window.devicePixelRatio || 1) / (this.ctx.backingStorePixelRatio || 1);
+                this.width = canvas.width; this.height = canvas.height; this.naturalWidth = this.width * this.dpr; this.naturalHeight = this.height * this.dpr;
+                if (this.width !== this.naturalWidth) { this.canvas.width = this.naturalWidth; this.canvas.height = this.naturalHeight; this.canvas.style.width = this.width + "px"; this.canvas.style.height = this.height + "px"; }
+                Stage.stages.push(this);
+                this._listeners = { resize: [], pointerstart: [], pointermove: [], pointerend: [], lastPointerPos: { x: 0, y: 0 }, };
+            }
+            Stage.stages = [];
+            Stage.prototype.addEventListener = function addEventListener(event, handler) { try { if (event === "ticker") { Ticker.addListener(handler); } else { this._listeners[event].push(handler); } } catch (e) { throw "Invalid Event"; } };
+            Stage.prototype.dispatchEvent = function dispatchEvent(event, val) { const listeners = this._listeners[event]; if (listeners) { listeners.forEach((listener) => listener.call(this, val)); } };
+            Stage.prototype.resize = function resize(w, h) { this.width = w; this.height = h; this.naturalWidth = w * this.dpr; this.naturalHeight = h * this.dpr; this.canvas.width = this.naturalWidth; this.canvas.height = this.naturalHeight; this.canvas.style.width = w + "px"; this.canvas.style.height = h + "px"; this.dispatchEvent("resize"); };
+            Stage.windowToCanvas = function windowToCanvas(canvas, x, y) { const bbox = canvas.getBoundingClientRect(); return { x: (x - bbox.left) * (canvas.width / bbox.width), y: (y - bbox.top) * (canvas.height / bbox.height), }; };
+            Stage.mouseHandler = function mouseHandler(evt) { if (Date.now() - lastTouchTimestamp < 500) { return; } let type = "start"; if (evt.type === "mousemove") { type = "move"; } else if (evt.type === "mouseup") { type = "end"; } Stage.stages.forEach((stage) => { const pos = Stage.windowToCanvas(stage.canvas, evt.clientX, evt.clientY); stage.pointerEvent(type, pos.x / stage.dpr, pos.y / stage.dpr); }); };
+            Stage.touchHandler = function touchHandler(evt) { lastTouchTimestamp = Date.now(); let type = "start"; if (evt.type === "touchmove") { type = "move"; } else if (evt.type === "touchend") { type = "end"; } Stage.stages.forEach((stage) => { for (let touch of Array.from(evt.changedTouches)) { let pos; if (type !== "end") { pos = Stage.windowToCanvas(stage.canvas, touch.clientX, touch.clientY); stage._listeners.lastPointerPos = pos; if (type === "start") stage.pointerEvent("move", pos.x / stage.dpr, pos.y / stage.dpr); } else { pos = stage._listeners.lastPointerPos; } stage.pointerEvent(type, pos.x / stage.dpr, pos.y / stage.dpr); } }); };
+            Stage.prototype.pointerEvent = function pointerEvent(type, x, y) { const evt = { type: type, x: x, y: y, }; evt.onCanvas = x >= 0 && x <= this.width && y >= 0 && y <= this.height; this.dispatchEvent("pointer" + type, evt); };
+            document.addEventListener("mousedown", Stage.mouseHandler); document.addEventListener("mousemove", Stage.mouseHandler); document.addEventListener("mouseup", Stage.mouseHandler); document.addEventListener("touchstart", Stage.touchHandler); document.addEventListener("touchmove", Stage.touchHandler); document.addEventListener("touchend", Stage.touchHandler);
+            return Stage;
+        })(window, document, Ticker);
+
+        // --- Logic Pháo Hoa Chính ---
+        const IS_MOBILE = window.innerWidth <= 640;
+        const IS_DESKTOP = window.innerWidth > 800;
+        const MAX_WIDTH = 7680; const MAX_HEIGHT = 4320; const GRAVITY = 0.9;
+        let simSpeed = 1;
+        
+        let stageW, stageH;
+        let quality = 3; 
+        let isLowQuality = false; let isNormalQuality = false; let isHighQuality = true;
+        const QUALITY_LOW=1, QUALITY_NORMAL=2, QUALITY_HIGH=3;
+        const SKY_LIGHT_NONE=0, SKY_LIGHT_DIM=1, SKY_LIGHT_NORMAL=2;
+        const COLOR = { Red: "#ff0043", Green: "#14fc56", Blue: "#1e7fff", Purple: "#e60aff", Gold: "#ffbf36", White: "#ffffff", };
+        const INVISIBLE = "_INVISIBLE_"; const PI_2 = Math.PI * 2; const PI_HALF = Math.PI * 0.5;
+
+        // Init Stages
+        const trailsStage = new Stage("trails-canvas");
+        const mainStage = new Stage("main-canvas");
+        const stages = [trailsStage, mainStage];
+
+        // Store cấu hình
+        const store = {
+            state: {
+                paused: true,
+                soundEnabled: true,
+                menuOpen: false,
+                config: { quality: "3", shell: "Random", size: IS_DESKTOP ? "3" : "2", autoLaunch: true, finale: false, skyLighting: "2", hideControls: true, longExposure: false, scaleFactor: IS_MOBILE ? 0.9 : 1 }
+            },
+            setState(nextState) { this.state = Object.assign({}, this.state, nextState); },
+        };
+
+        const COLOR_NAMES = Object.keys(COLOR);
+        const COLOR_CODES = COLOR_NAMES.map(name => COLOR[name]);
+        const COLOR_CODES_W_INVIS = [...COLOR_CODES, INVISIBLE];
+        const COLOR_TUPLES = {};
+        COLOR_CODES.forEach(hex => { COLOR_TUPLES[hex] = { r: parseInt(hex.substr(1, 2), 16), g: parseInt(hex.substr(3, 2), 16), b: parseInt(hex.substr(5, 2), 16), }; });
+
+        function randomColorSimple() { return COLOR_CODES[(Math.random() * COLOR_CODES.length) | 0]; }
+        let lastColor;
+        function randomColor(options) {
+            const notSame = options && options.notSame; const notColor = options && options.notColor; const limitWhite = options && options.limitWhite;
+            let color = randomColorSimple();
+            if (limitWhite && color === COLOR.White && Math.random() < 0.6) color = randomColorSimple();
+            if (notSame) { while (color === lastColor) color = randomColorSimple(); } else if (notColor) { while (color === notColor) color = randomColorSimple(); }
+            lastColor = color; return color;
+        }
+        function whiteOrGold() { return Math.random() < 0.5 ? COLOR.Gold : COLOR.White; }
+        function makePistilColor(shellColor) { return shellColor === COLOR.White || shellColor === COLOR.Gold ? randomColor({ notColor: shellColor }) : whiteOrGold(); }
+
+        // Shell Types
+        const crysanthemumShell = (size=1) => {
+            const glitter = Math.random() < 0.25; const singleColor = Math.random() < 0.72;
+            const color = singleColor ? randomColor({ limitWhite: true }) : [randomColor(), randomColor({ notSame: true })];
+            const pistil = singleColor && Math.random() < 0.42; const pistilColor = pistil && makePistilColor(color);
+            const secondColor = singleColor && (Math.random() < 0.2 || color === COLOR.White) ? pistilColor || randomColor({ notColor: color, limitWhite: true }) : null;
+            const streamers = !pistil && color !== COLOR.White && Math.random() < 0.42;
+            let starDensity = glitter ? 1.1 : 1.25; if (isHighQuality) starDensity = 1.2;
+            return { shellSize: size, spreadSize: 300 + size * 100, starLife: 900 + size * 200, starDensity, color, secondColor, glitter: glitter ? "light" : "", glitterColor: whiteOrGold(), pistil, pistilColor, streamers, };
+        };
+        const ghostShell = (size=1) => { const shell = crysanthemumShell(size); shell.starLife *= 1.5; let ghostColor = randomColor({ notColor: COLOR.White }); shell.streamers = true; shell.color = INVISIBLE; shell.secondColor = ghostColor; shell.glitter = ""; return shell; };
+        const strobeShell = (size=1) => { const color = randomColor({ limitWhite: true }); return { shellSize: size, spreadSize: 280 + size * 92, starLife: 1100 + size * 200, starLifeVariation: 0.4, starDensity: 1.1, color, glitter: "light", glitterColor: COLOR.White, strobe: true, strobeColor: Math.random() < 0.5 ? COLOR.White : null, pistil: Math.random() < 0.5, pistilColor: makePistilColor(color), }; };
+        const palmShell = (size=1) => { const color = randomColor(); const thick = Math.random() < 0.5; return { shellSize: size, color, spreadSize: 250 + size * 75, starDensity: thick ? 0.15 : 0.4, starLife: 1800 + size * 200, glitter: thick ? "thick" : "heavy", }; };
+        const ringShell = (size=1) => { const color = randomColor(); const pistil = Math.random() < 0.75; return { shellSize: size, ring: true, color, spreadSize: 300 + size * 100, starLife: 900 + size * 200, starCount: 2.2 * PI_2 * (size + 1), pistil, pistilColor: makePistilColor(color), glitter: !pistil ? "light" : "", glitterColor: color === COLOR.Gold ? COLOR.Gold : COLOR.White, streamers: Math.random() < 0.3, }; };
+        const crossetteShell = (size=1) => { const color = randomColor({ limitWhite: true }); return { shellSize: size, spreadSize: 300 + size * 100, starLife: 750 + size * 160, starLifeVariation: 0.4, starDensity: 0.85, color, crossette: true, pistil: Math.random() < 0.5, pistilColor: makePistilColor(color), }; };
+        const floralShell = (size=1) => ({ shellSize: size, spreadSize: 300 + size * 120, starDensity: 0.12, starLife: 500 + size * 50, starLifeVariation: 0.5, color: Math.random() < 0.65 ? "random" : Math.random() < 0.15 ? randomColor() : [randomColor(), randomColor({ notSame: true })], floral: true, });
+        const fallingLeavesShell = (size=1) => ({ shellSize: size, color: INVISIBLE, spreadSize: 300 + size * 120, starDensity: 0.12, starLife: 500 + size * 50, starLifeVariation: 0.5, glitter: "medium", glitterColor: COLOR.Gold, fallingLeaves: true, });
+        const willowShell = (size=1) => ({ shellSize: size, spreadSize: 300 + size * 100, starDensity: 0.6, starLife: 3000 + size * 300, glitter: "willow", glitterColor: COLOR.Gold, color: INVISIBLE, });
+        const crackleShell = (size=1) => { const color = Math.random() < 0.75 ? COLOR.Gold : randomColor(); return { shellSize: size, spreadSize: 380 + size * 75, starDensity: 1, starLife: 600 + size * 100, starLifeVariation: 0.32, glitter: "light", glitterColor: COLOR.Gold, color, crackle: true, pistil: Math.random() < 0.65, pistilColor: makePistilColor(color), }; };
+        const horsetailShell = (size=1) => { const color = randomColor(); return { shellSize: size, horsetail: true, color, spreadSize: 250 + size * 38, starDensity: 0.9, starLife: 2500 + size * 300, glitter: "medium", glitterColor: Math.random() < 0.5 ? whiteOrGold() : color, strobe: color === COLOR.White, }; };
+
+        function randomShellName() { return Math.random() < 0.5 ? "Crysanthemum" : shellNames[(Math.random() * (shellNames.length - 1) + 1) | 0]; }
+        function randomShell(size) { return shellTypes[randomShellName()](size); }
+        function shellFromConfig(size) { return shellTypes[store.state.config.shell](size); }
+        const fastShellBlacklist = ["Falling Leaves", "Floral", "Willow"];
+        function randomFastShell() {
+            const isRandom = store.state.config.shell === "Random";
+            let shellName = isRandom ? randomShellName() : store.state.config.shell;
+            if (isRandom) { while (fastShellBlacklist.includes(shellName)) shellName = randomShellName(); }
+            return shellTypes[shellName];
+        }
+        const shellTypes = { Random: randomShell, Crackle: crackleShell, Crossette: crossetteShell, Crysanthemum: crysanthemumShell, "Falling Leaves": fallingLeavesShell, Floral: floralShell, Ghost: ghostShell, "Horse Tail": horsetailShell, Palm: palmShell, Ring: ringShell, Strobe: strobeShell, Willow: willowShell, };
+        const shellNames = Object.keys(shellTypes);
+
+        // Position & Launch Logic
+        function fitShellPositionInBoundsH(position) { const edge = 0.18; return (1 - edge * 2) * position + edge; }
+        function fitShellPositionInBoundsV(position) { return position * 0.75; }
+        function getRandomShellPositionH() { return fitShellPositionInBoundsH(Math.random()); }
+        function getRandomShellPositionV() { return fitShellPositionInBoundsV(Math.random()); }
+        function getRandomShellSize() {
+            const baseSize = +store.state.config.size; const maxVariance = Math.min(2.5, baseSize);
+            const variance = Math.random() * maxVariance;
+            const size = baseSize - variance;
+            const height = maxVariance === 0 ? Math.random() : 1 - variance / maxVariance;
+            const centerOffset = Math.random() * (1 - height * 0.65) * 0.5;
+            const x = Math.random() < 0.5 ? 0.5 - centerOffset : 0.5 + centerOffset;
+            return { size, x: fitShellPositionInBoundsH(x), height: fitShellPositionInBoundsV(height), };
+        }
+        function launchShellFromConfig(event) {
+            const shell = new Shell(shellFromConfig(+store.state.config.size));
+            const w = mainStage.width; const h = mainStage.height;
+            shell.launch( event ? event.x / w : getRandomShellPositionH(), event ? 1 - event.y / h : getRandomShellPositionV() );
+        }
+
+        // Sequences
+        function seqRandomShell() {
+            const size = getRandomShellSize(); const shell = new Shell(shellFromConfig(size.size));
+            shell.launch(size.x, size.height);
+            let extraDelay = shell.starLife; if (shell.fallingLeaves) extraDelay = 4600;
+            return 900 + Math.random() * 600 + extraDelay;
+        }
+        function seqRandomFastShell() {
+            const shellType = randomFastShell(); const size = getRandomShellSize();
+            const shell = new Shell(shellType(size.size)); shell.launch(size.x, size.height);
+            return 900 + Math.random() * 600 + shell.starLife;
+        }
+        function seqTwoRandom() {
+            const size1 = getRandomShellSize(); const size2 = getRandomShellSize();
+            const shell1 = new Shell(shellFromConfig(size1.size)); const shell2 = new Shell(shellFromConfig(size2.size));
+            shell1.launch(0.3 + (Math.random()*0.2-0.1), size1.height);
+            setTimeout(() => { shell2.launch(0.7 + (Math.random()*0.2-0.1), size2.height); }, 100);
+            return 900 + Math.random() * 600 + Math.max(shell1.starLife, shell2.starLife);
+        }
+        function seqTriple() {
+            const shellType = randomFastShell(); const baseSize = +store.state.config.size; const smallSize = Math.max(0, baseSize - 1.25);
+            const shell1 = new Shell(shellType(baseSize)); shell1.launch(0.5 + (Math.random()*0.08-0.04), 0.7);
+            setTimeout(() => { const shell2 = new Shell(shellType(smallSize)); shell2.launch(0.2 + (Math.random()*0.08-0.04), 0.1); }, 1000 + Math.random() * 400);
+            setTimeout(() => { const shell3 = new Shell(shellType(smallSize)); shell3.launch(0.8 + (Math.random()*0.08-0.04), 0.1); }, 1000 + Math.random() * 400);
+            return 4000;
+        }
+        function seqPyramid() {
+            const barrageCountHalf = IS_DESKTOP ? 7 : 4; const largeSize = +store.state.config.size; const smallSize = Math.max(0, largeSize - 3);
+            const randomMainShell = Math.random() < 0.78 ? crysanthemumShell : ringShell; const randomSpecialShell = randomShell;
+            function launchShell(x, useSpecial) {
+                const isRandom = store.state.config.shell === "Random";
+                let shellType = isRandom ? useSpecial ? randomSpecialShell : randomMainShell : shellTypes[store.state.config.shell];
+                const shell = new Shell(shellType(useSpecial ? largeSize : smallSize));
+                shell.launch(x, useSpecial ? 0.75 : (x <= 0.5 ? x / 0.5 : (1 - x) / 0.5) * 0.42);
+            }
+            let count = 0; let delay = 0;
+            while (count <= barrageCountHalf) {
+                if (count === barrageCountHalf) { setTimeout(() => { launchShell(0.5, true); }, delay); } else {
+                    const offset = (count / barrageCountHalf) * 0.5; const delayOffset = Math.random() * 30 + 30;
+                    setTimeout(() => { launchShell(offset, false); }, delay); setTimeout(() => { launchShell(1 - offset, false); }, delay + delayOffset);
+                }
+                count++; delay += 200;
+            }
+            return 3400 + barrageCountHalf * 250;
+        }
+        function seqSmallBarrage() {
+            seqSmallBarrage.lastCalled = Date.now();
+            const barrageCount = IS_DESKTOP ? 11 : 5; const specialIndex = IS_DESKTOP ? 3 : 1;
+            const shellSize = Math.max(0, +store.state.config.size - 2);
+            const randomMainShell = Math.random() < 0.78 ? crysanthemumShell : ringShell; const randomSpecialShell = randomFastShell();
+            function launchShell(x, useSpecial) {
+                const isRandom = store.state.config.shell === "Random";
+                let shellType = isRandom ? useSpecial ? randomSpecialShell : randomMainShell : shellTypes[store.state.config.shell];
+                const shell = new Shell(shellType(shellSize)); shell.launch(x, ((Math.cos(x * 5 * Math.PI + PI_HALF) + 1) / 2) * 0.75);
+            }
+            let count = 0; let delay = 0;
+            while (count < barrageCount) {
+                if (count === 0) { launchShell(0.5, false); count += 1; } else {
+                    const offset = (count + 1) / barrageCount / 2; const delayOffset = Math.random() * 30 + 30; const useSpecial = count === specialIndex;
+                    setTimeout(() => { launchShell(0.5 + offset, useSpecial); }, delay); setTimeout(() => { launchShell(0.5 - offset, useSpecial); }, delay + delayOffset);
+                    count += 2;
+                }
+                delay += 200;
+            }
+            return 3400 + barrageCount * 120;
+        }
+        seqSmallBarrage.cooldown = 15000; seqSmallBarrage.lastCalled = Date.now();
+
+        const sequences = [seqRandomShell, seqTwoRandom, seqTriple, seqPyramid, seqSmallBarrage];
+
+        // ----------------------------------------------------------------------------------------
+        // --- LOGIC TRÌNH TỰ BẮN MỚI (CHỈNH SỬA TẠI ĐÂY) ---
+        // ----------------------------------------------------------------------------------------
+        let seqStep = 0; 
+
+        function startSequence() {
+            try {
+                // BƯỚC 1: Bắn 1 viên duy nhất ở trung tâm
+                if (seqStep === 0) {
+                    seqStep++;
+                    const shell = new Shell(crysanthemumShell(+store.state.config.size));
+                    shell.launch(0.5, 0.5);
+                    return 1500; 
+                }
+
+                // BƯỚC 2: Bắn phương ngang trung tâm trước
+                if (seqStep === 1) {
+                    seqStep++;
+                    const size = +store.state.config.size;
+                    const shell1 = new Shell(crysanthemumShell(size)); shell1.launch(0.5, 0.7);
+                    setTimeout(() => { const s = new Shell(crysanthemumShell(size)); s.launch(0.4, 0.6); }, 200);
+                    setTimeout(() => { const s = new Shell(crysanthemumShell(size)); s.launch(0.6, 0.6); }, 200);
+                    return 1200;
+                }
+
+                // BƯỚC 3: 2 bên tăng dần (dồn) về trung tâm
+                if (seqStep === 2) {
+                    seqStep++;
+                    const size = +store.state.config.size;
+                    // Loạt 1: Ngoài cùng
+                    const sL1 = new Shell(randomShell(size)); sL1.launch(0.1, 0.5);
+                    const sR1 = new Shell(randomShell(size)); sR1.launch(0.9, 0.5);
+                    
+                    // Loạt 2: Tiến vào giữa
+                    setTimeout(() => {
+                        const sL2 = new Shell(randomShell(size)); sL2.launch(0.3, 0.65);
+                        const sR2 = new Shell(randomShell(size)); sR2.launch(0.7, 0.65);
+                    }, 400);
+
+                    // Loạt 3: Chốt hạ ở giữa
+                    setTimeout(() => {
+                        const sMid = new Shell(crysanthemumShell(size)); sMid.launch(0.5, 0.8);
+                    }, 800);
+
+                    return 2000;
+                }
+
+                // BƯỚC 4: Bắn lộn xộn (Chaos mode) - Tăng tốc
+                const rand = Math.random();
+                if (rand < 0.15 && Date.now() - seqSmallBarrage.lastCalled > seqSmallBarrage.cooldown) return seqSmallBarrage();
+                if (rand < 0.25) return seqPyramid(); 
+                if (rand < 0.6) return seqRandomShell();
+                else if (rand < 0.8) return seqTwoRandom();
+                else return seqTriple();
+
+            } catch (err) {
+                console.error("Lỗi trong sequence:", err);
+                return 2000;
+            }
+        }
+
+        let currentFrame = 0;
+        let autoLaunchTime = 0;
+
+        function update(frameTime, lag) {
+            if (store.state.paused) return;
+            const width = stageW; const height = stageH; const timeStep = frameTime * simSpeed; const speed = simSpeed * lag;
+            currentFrame++;
+            
+            // --- CẬP NHẬT TỐC ĐỘ BẮN ---
+            if (store.state.config.autoLaunch) { 
+                autoLaunchTime -= timeStep; 
+                if (autoLaunchTime <= 0) {
+                    let nextDelay = startSequence();
+                    // Nếu gặp lỗi hoặc trả về NaN thì gán mặc định
+                    if (!nextDelay || isNaN(nextDelay)) nextDelay = 2000;
+                    
+                    // Nhân với 0.7 để tăng tốc độ bắn (giảm thời gian chờ)
+                    autoLaunchTime = nextDelay * 0.7; 
+                }
+            }
+            
+            const starDrag = 1 - (1 - Star.airDrag) * speed; const starDragHeavy = 1 - (1 - Star.airDragHeavy) * speed; const sparkDrag = 1 - (1 - Spark.airDrag) * speed; const gAcc = (timeStep / 1000) * GRAVITY;
+            COLOR_CODES_W_INVIS.forEach(color => {
+                const stars = Star.active[color];
+                for (let i = stars.length - 1; i >= 0; i--) {
+                    const star = stars[i];
+                    if (star.updateFrame === currentFrame) continue;
+                    star.updateFrame = currentFrame; star.life -= timeStep;
+                    if (star.life <= 0) { stars.splice(i, 1); Star.returnInstance(star); } else {
+                        const burnRate = Math.pow(star.life / star.fullLife, 0.5); const burnRateInverse = 1 - burnRate;
+                        star.prevX = star.x; star.prevY = star.y; star.x += star.speedX * speed; star.y += star.speedY * speed;
+                        if (!star.heavy) { star.speedX *= starDrag; star.speedY *= starDrag; } else { star.speedX *= starDragHeavy; star.speedY *= starDragHeavy; }
+                        star.speedY += gAcc;
+                        if (star.spinRadius) { star.spinAngle += star.spinSpeed * speed; star.x += Math.sin(star.spinAngle) * star.spinRadius * speed; star.y += Math.cos(star.spinAngle) * star.spinRadius * speed; }
+                        if (star.sparkFreq) {
+                            star.sparkTimer -= timeStep;
+                            while (star.sparkTimer < 0) {
+                                star.sparkTimer += star.sparkFreq * 0.75 + star.sparkFreq * burnRateInverse * 4;
+                                Spark.add(star.x, star.y, star.sparkColor, Math.random() * PI_2, Math.random() * star.sparkSpeed * burnRate, star.sparkLife * 0.8 + Math.random() * star.sparkLifeVariation * star.sparkLife);
+                            }
+                        }
+                        if (star.life < star.transitionTime) {
+                            if (star.secondColor && !star.colorChanged) { star.colorChanged = true; star.color = star.secondColor; stars.splice(i, 1); Star.active[star.secondColor].push(star); if (star.secondColor === INVISIBLE) star.sparkFreq = 0; }
+                            if (star.strobe) star.visible = Math.floor(star.life / star.strobeFreq) % 3 === 0;
+                        }
+                    }
+                }
+                const sparks = Spark.active[color];
+                for (let i = sparks.length - 1; i >= 0; i--) {
+                    const spark = sparks[i]; spark.life -= timeStep;
+                    if (spark.life <= 0) { sparks.splice(i, 1); Spark.returnInstance(spark); } else { spark.prevX = spark.x; spark.prevY = spark.y; spark.x += spark.speedX * speed; spark.y += spark.speedY * speed; spark.speedX *= sparkDrag; spark.speedY *= sparkDrag; spark.speedY += gAcc; }
+                }
+            });
+            render(speed);
+        }
+
+        function render(speed) {
+            const { dpr } = mainStage; const width = stageW; const height = stageH; const trailsCtx = trailsStage.ctx; const mainCtx = mainStage.ctx;
+            if (store.state.config.skyLighting !== SKY_LIGHT_NONE + "") colorSky(speed);
+            const scaleFactor = +store.state.config.scaleFactor;
+            trailsCtx.scale(dpr * scaleFactor, dpr * scaleFactor); mainCtx.scale(dpr * scaleFactor, dpr * scaleFactor);
+            trailsCtx.globalCompositeOperation = "source-over"; trailsCtx.fillStyle = `rgba(0, 0, 0, ${store.state.config.longExposure ? 0.0025 : 0.175 * speed})`; trailsCtx.fillRect(0, 0, width, height);
+            mainCtx.clearRect(0, 0, width, height);
+            while (BurstFlash.active.length) {
+                const bf = BurstFlash.active.pop();
+                const burstGradient = trailsCtx.createRadialGradient(bf.x, bf.y, 0, bf.x, bf.y, bf.radius);
+                burstGradient.addColorStop(0.024, "rgba(255, 255, 255, 1)"); burstGradient.addColorStop(0.125, "rgba(255, 160, 20, 0.2)"); burstGradient.addColorStop(0.32, "rgba(255, 140, 20, 0.11)"); burstGradient.addColorStop(1, "rgba(255, 120, 20, 0)");
+                trailsCtx.fillStyle = burstGradient; trailsCtx.fillRect(bf.x - bf.radius, bf.y - bf.radius, bf.radius * 2, bf.radius * 2); BurstFlash.returnInstance(bf);
+            }
+            trailsCtx.globalCompositeOperation = "lighten"; trailsCtx.lineWidth = Star.drawWidth; trailsCtx.lineCap = isLowQuality ? "square" : "round";
+            mainCtx.strokeStyle = "#fff"; mainCtx.lineWidth = 1; mainCtx.beginPath();
+            COLOR_CODES.forEach(color => {
+                const stars = Star.active[color]; trailsCtx.strokeStyle = color; trailsCtx.beginPath();
+                stars.forEach(star => { if (star.visible) { trailsCtx.moveTo(star.x, star.y); trailsCtx.lineTo(star.prevX, star.prevY); mainCtx.moveTo(star.x, star.y); mainCtx.lineTo(star.x - star.speedX * 1.6, star.y - star.speedY * 1.6); } });
+                trailsCtx.stroke();
+            });
+            mainCtx.stroke();
+            trailsCtx.lineWidth = Spark.drawWidth; trailsCtx.lineCap = "butt";
+            COLOR_CODES.forEach(color => {
+                const sparks = Spark.active[color]; trailsCtx.strokeStyle = color; trailsCtx.beginPath();
+                sparks.forEach(spark => { trailsCtx.moveTo(spark.x, spark.y); trailsCtx.lineTo(spark.prevX, spark.prevY); });
+                trailsCtx.stroke();
+            });
+            trailsCtx.setTransform(1, 0, 0, 1, 0, 0); mainCtx.setTransform(1, 0, 0, 1, 0, 0);
+        }
+
+        const currentSkyColor = { r: 0, g: 0, b: 0 }; const targetSkyColor = { r: 0, g: 0, b: 0 };
+        function colorSky(speed) {
+            const maxSkySaturation = (+store.state.config.skyLighting) * 15; const maxStarCount = 500; let totalStarCount = 0;
+            targetSkyColor.r = 0; targetSkyColor.g = 0; targetSkyColor.b = 0;
+            COLOR_CODES.forEach(color => { const tuple = COLOR_TUPLES[color]; const count = Star.active[color].length; totalStarCount += count; targetSkyColor.r += tuple.r * count; targetSkyColor.g += tuple.g * count; targetSkyColor.b += tuple.b * count; });
+            const intensity = Math.pow(Math.min(1, totalStarCount / maxStarCount), 0.3); const maxColorComponent = Math.max(1, targetSkyColor.r, targetSkyColor.g, targetSkyColor.b);
+            targetSkyColor.r = (targetSkyColor.r / maxColorComponent) * maxSkySaturation * intensity; targetSkyColor.g = (targetSkyColor.g / maxColorComponent) * maxSkySaturation * intensity; targetSkyColor.b = (targetSkyColor.b / maxColorComponent) * maxSkySaturation * intensity;
+            const colorChange = 10;
+            currentSkyColor.r += ((targetSkyColor.r - currentSkyColor.r) / colorChange) * speed; currentSkyColor.g += ((targetSkyColor.g - currentSkyColor.g) / colorChange) * speed; currentSkyColor.b += ((targetSkyColor.b - currentSkyColor.b) / colorChange) * speed;
+            document.querySelector('.canvas-container').style.backgroundColor = `rgb(${currentSkyColor.r | 0}, ${currentSkyColor.g | 0}, ${currentSkyColor.b | 0})`;
+        }
+        mainStage.addEventListener("ticker", update);
+
+        // Particle Factories
+        function createParticleArc(start, arcLength, count, randomness, particleFactory) { const angleDelta = arcLength / count; const end = start + arcLength - angleDelta * 0.5; if (end > start) { for (let angle = start; angle < end; angle = angle + angleDelta) { particleFactory(angle + Math.random() * angleDelta * randomness); } } else { for (let angle = start; angle > end; angle = angle + angleDelta) { particleFactory(angle + Math.random() * angleDelta * randomness); } } }
+        function createBurst(count, particleFactory, startAngle = 0, arcLength = PI_2) { const R = 0.5 * Math.sqrt(count / Math.PI); const C = 2 * R * Math.PI; const C_HALF = C / 2; for (let i = 0; i <= C_HALF; i++) { const ringAngle = (i / C_HALF) * PI_HALF; const ringSize = Math.cos(ringAngle); const partsPerFullRing = C * ringSize; const partsPerArc = partsPerFullRing * (arcLength / PI_2); const angleInc = PI_2 / partsPerFullRing; const angleOffset = Math.random() * angleInc + startAngle; const maxRandomAngleOffset = angleInc * 0.33; for (let i = 0; i < partsPerArc; i++) { const randomAngleOffset = Math.random() * maxRandomAngleOffset; let angle = angleInc * i + angleOffset + randomAngleOffset; particleFactory(angle, ringSize); } } }
+        
+        // Effects
+        function crossetteEffect(star) { const startAngle = Math.random() * PI_HALF; createParticleArc(startAngle, PI_2, 4, 0.5, (angle) => { Star.add(star.x, star.y, star.color, angle, Math.random() * 0.6 + 0.75, 600); }); }
+        function floralEffect(star) { const count = 12 + 6 * quality; createBurst(count, (angle, speedMult) => { Star.add(star.x, star.y, star.color, angle, speedMult * 2.4, 1000 + Math.random() * 300, star.speedX, star.speedY); }); BurstFlash.add(star.x, star.y, 46); soundManager.playSound("burstSmall"); }
+        function fallingLeavesEffect(star) { createBurst(7, (angle, speedMult) => { const newStar = Star.add(star.x, star.y, INVISIBLE, angle, speedMult * 2.4, 2400 + Math.random() * 600, star.speedX, star.speedY); newStar.sparkColor = COLOR.Gold; newStar.sparkFreq = 144 / quality; newStar.sparkSpeed = 0.28; newStar.sparkLife = 750; newStar.sparkLifeVariation = 3.2; }); BurstFlash.add(star.x, star.y, 46); soundManager.playSound("burstSmall"); }
+        function crackleEffect(star) { const count = isHighQuality ? 32 : 16; createParticleArc(0, PI_2, count, 1.8, (angle) => { Spark.add(star.x, star.y, COLOR.Gold, angle, Math.pow(Math.random(), 0.45) * 2.4, 300 + Math.random() * 200); }); }
+
+        class Shell {
+            constructor(options) { Object.assign(this, options); this.starLifeVariation = options.starLifeVariation || 0.125; this.color = options.color || randomColor(); this.glitterColor = options.glitterColor || this.color; if (!this.starCount) { const density = options.starDensity || 1; const scaledSize = this.spreadSize / 54; this.starCount = Math.max(6, scaledSize * scaledSize * density); } }
+            launch(position, launchHeight) {
+                const width = stageW; const height = stageH; const hpad = 60; const vpad = 50; const minHeightPercent = 0.45; const minHeight = height - height * minHeightPercent;
+                const launchX = position * (width - hpad * 2) + hpad; const launchY = height; const burstY = minHeight - launchHeight * (minHeight - vpad); const launchDistance = launchY - burstY; const launchVelocity = Math.pow(launchDistance * 0.04, 0.64);
+                const comet = (this.comet = Star.add(launchX, launchY, typeof this.color === "string" && this.color !== "random" ? this.color : COLOR.White, Math.PI, launchVelocity * (this.horsetail ? 1.2 : 1), launchVelocity * (this.horsetail ? 100 : 400)));
+                comet.heavy = true; comet.spinRadius = MyMath.random(0.32, 0.85); comet.sparkFreq = 32 / quality; if (isHighQuality) comet.sparkFreq = 8; comet.sparkLife = 320; comet.sparkLifeVariation = 3;
+                if (this.glitter === "willow" || this.fallingLeaves) { comet.sparkFreq = 20 / quality; comet.sparkSpeed = 0.5; comet.sparkLife = 500; }
+                if (this.color === INVISIBLE) comet.sparkColor = COLOR.Gold;
+                if (Math.random() > 0.4 && !this.horsetail) { comet.secondColor = INVISIBLE; comet.transitionTime = Math.pow(Math.random(), 1.5) * 700 + 500; }
+                comet.onDeath = (comet) => this.burst(comet.x, comet.y);
+                soundManager.playSound("lift");
+            }
+            burst(x, y) {
+                const speed = this.spreadSize / 96; let color, onDeath, sparkFreq, sparkSpeed, sparkLife; let sparkLifeVariation = 0.25; let playedDeathSound = false;
+                if (this.crossette) onDeath = (star) => { if (!playedDeathSound) { soundManager.playSound("crackleSmall"); playedDeathSound = true; } crossetteEffect(star); };
+                if (this.crackle) onDeath = (star) => { if (!playedDeathSound) { soundManager.playSound("crackle"); playedDeathSound = true; } crackleEffect(star); };
+                if (this.floral) onDeath = floralEffect; if (this.fallingLeaves) onDeath = fallingLeavesEffect;
+                if (this.glitter === "light") { sparkFreq = 400; sparkSpeed = 0.3; sparkLife = 300; sparkLifeVariation = 2; } else if (this.glitter === "medium") { sparkFreq = 200; sparkSpeed = 0.44; sparkLife = 700; sparkLifeVariation = 2; } else if (this.glitter === "heavy") { sparkFreq = 80; sparkSpeed = 0.8; sparkLife = 1400; sparkLifeVariation = 2; } else if (this.glitter === "thick") { sparkFreq = 16; sparkSpeed = isHighQuality ? 1.65 : 1.5; sparkLife = 1400; sparkLifeVariation = 3; } else if (this.glitter === "streamer") { sparkFreq = 32; sparkSpeed = 1.05; sparkLife = 620; sparkLifeVariation = 2; } else if (this.glitter === "willow") { sparkFreq = 120; sparkSpeed = 0.34; sparkLife = 1400; sparkLifeVariation = 3.8; }
+                sparkFreq = sparkFreq / quality; let firstStar = true;
+                const starFactory = (angle, speedMult) => {
+                    const standardInitialSpeed = this.spreadSize / 1800; const star = Star.add(x, y, color || randomColor(), angle, speedMult * speed, this.starLife + Math.random() * this.starLife * this.starLifeVariation, this.horsetail ? this.comet && this.comet.speedX : 0, this.horsetail ? this.comet && this.comet.speedY : -standardInitialSpeed);
+                    if (this.secondColor) { star.transitionTime = this.starLife * (Math.random() * 0.05 + 0.32); star.secondColor = this.secondColor; }
+                    if (this.strobe) { star.transitionTime = this.starLife * (Math.random() * 0.08 + 0.46); star.strobe = true; star.strobeFreq = Math.random() * 20 + 40; if (this.strobeColor) star.secondColor = this.strobeColor; }
+                    star.onDeath = onDeath; if (this.glitter) { star.sparkFreq = sparkFreq; star.sparkSpeed = sparkSpeed; star.sparkLife = sparkLife; star.sparkLifeVariation = sparkLifeVariation; star.sparkColor = this.glitterColor; star.sparkTimer = Math.random() * star.sparkFreq; }
+                };
+                if (typeof this.color === "string") { if (this.color === "random") color = null; else color = this.color; if (this.ring) { const ringStartAngle = Math.random() * Math.PI; const ringSquash = Math.pow(Math.random(), 2) * 0.85 + 0.15; createParticleArc(0, PI_2, this.starCount, 0, (angle) => { const initSpeedX = Math.sin(angle) * speed * ringSquash; const initSpeedY = Math.cos(angle) * speed; const newSpeed = MyMath.pointDist(0, 0, initSpeedX, initSpeedY); const newAngle = MyMath.pointAngle(0, 0, initSpeedX, initSpeedY) + ringStartAngle; const star = Star.add(x, y, color, newAngle, newSpeed, this.starLife + Math.random() * this.starLife * this.starLifeVariation); if (this.glitter) { star.sparkFreq = sparkFreq; star.sparkSpeed = sparkSpeed; star.sparkLife = sparkLife; star.sparkLifeVariation = sparkLifeVariation; star.sparkColor = this.glitterColor; star.sparkTimer = Math.random() * star.sparkFreq; } }); } else { createBurst(this.starCount, starFactory); } } else if (Array.isArray(this.color)) { if (Math.random() < 0.5) { const start = Math.random() * Math.PI; const start2 = start + Math.PI; const arc = Math.PI; color = this.color[0]; createBurst(this.starCount, starFactory, start, arc); color = this.color[1]; createBurst(this.starCount, starFactory, start2, arc); } else { color = this.color[0]; createBurst(this.starCount / 2, starFactory); color = this.color[1]; createBurst(this.starCount / 2, starFactory); } }
+                if (this.pistil) { const innerShell = new Shell({ spreadSize: this.spreadSize * 0.5, starLife: this.starLife * 0.6, starLifeVariation: this.starLifeVariation, starDensity: 1.4, color: this.pistilColor, glitter: "light", glitterColor: this.pistilColor === COLOR.Gold ? COLOR.Gold : COLOR.White, }); innerShell.burst(x, y); }
+                if (this.streamers) { const innerShell = new Shell({ spreadSize: this.spreadSize * 0.9, starLife: this.starLife * 0.8, starLifeVariation: this.starLifeVariation, starCount: Math.floor(Math.max(6, this.spreadSize / 45)), color: COLOR.White, glitter: "streamer", }); innerShell.burst(x, y); }
+                BurstFlash.add(x, y, this.spreadSize / 4);
+                if (this.comet) { const maxDiff = 2; const sizeDifferenceFromMaxSize = Math.min(maxDiff, +store.state.config.size - this.shellSize); const soundScale = (1 - sizeDifferenceFromMaxSize / maxDiff) * 0.3 + 0.7; soundManager.playSound("burst", soundScale); }
+            }
+        }
+
+        const BurstFlash = { active: [], _pool: [], _new() { return {}; }, add(x, y, radius) { const instance = this._pool.pop() || this._new(); instance.x = x; instance.y = y; instance.radius = radius; this.active.push(instance); return instance; }, returnInstance(instance) { this._pool.push(instance); }, };
+        function createParticleCollection() { const collection = {}; COLOR_CODES_W_INVIS.forEach(color => { collection[color] = []; }); return collection; }
+        const Star = { drawWidth: 3, airDrag: 0.98, airDragHeavy: 0.992, active: createParticleCollection(), _pool: [], _new() { return {}; }, add(x, y, color, angle, speed, life, speedOffX, speedOffY) { const instance = this._pool.pop() || this._new(); instance.visible = true; instance.heavy = false; instance.x = x; instance.y = y; instance.prevX = x; instance.prevY = y; instance.color = color; instance.speedX = Math.sin(angle) * speed + (speedOffX || 0); instance.speedY = Math.cos(angle) * speed + (speedOffY || 0); instance.life = life; instance.fullLife = life; instance.spinAngle = Math.random() * PI_2; instance.spinSpeed = 0.8; instance.spinRadius = 0; instance.sparkFreq = 0; instance.sparkSpeed = 1; instance.sparkTimer = 0; instance.sparkColor = color; instance.sparkLife = 750; instance.sparkLifeVariation = 0.25; instance.strobe = false; this.active[color].push(instance); return instance; }, returnInstance(instance) { instance.onDeath && instance.onDeath(instance); instance.onDeath = null; instance.secondColor = null; instance.transitionTime = 0; instance.colorChanged = false; this._pool.push(instance); }, };
+        const Spark = { drawWidth: 0, airDrag: 0.9, active: createParticleCollection(), _pool: [], _new() { return {}; }, add(x, y, color, angle, speed, life) { const instance = this._pool.pop() || this._new(); instance.x = x; instance.y = y; instance.prevX = x; instance.prevY = y; instance.color = color; instance.speedX = Math.sin(angle) * speed; instance.speedY = Math.cos(angle) * speed; instance.life = life; this.active[color].push(instance); return instance; }, returnInstance(instance) { this._pool.push(instance); }, };
+        
+        const soundManager = {
+            baseURL: "https://s3-us-west-2.amazonaws.com/s.cdpn.io/329180/", ctx: new (window.AudioContext || window.webkitAudioContext)(),
+            sources: { lift: { volume: 1, playbackRateMin: 0.85, playbackRateMax: 0.95, fileNames: ["lift1.mp3", "lift2.mp3", "lift3.mp3"], }, burst: { volume: 1, playbackRateMin: 0.8, playbackRateMax: 0.9, fileNames: ["burst1.mp3", "burst2.mp3"], }, burstSmall: { volume: 0.25, playbackRateMin: 0.8, playbackRateMax: 1, fileNames: ["burst-sm-1.mp3", "burst-sm-2.mp3"], }, crackle: { volume: 0.2, playbackRateMin: 1, playbackRateMax: 1, fileNames: ["crackle1.mp3"], }, crackleSmall: { volume: 0.3, playbackRateMin: 1, playbackRateMax: 1, fileNames: ["crackle-sm-1.mp3"], }, },
+            preload() { const allFilePromises = []; function checkStatus(response) { if (response.status >= 200 && response.status < 300) { return response; } const customError = new Error(response.statusText); customError.response = response; throw customError; } const types = Object.keys(this.sources); types.forEach((type) => { const source = this.sources[type]; const { fileNames } = source; const filePromises = []; fileNames.forEach((fileName) => { const fileURL = this.baseURL + fileName; const promise = fetch(fileURL) .then(checkStatus) .then((response) => response.arrayBuffer()) .then( (data) => new Promise((resolve) => { this.ctx.decodeAudioData(data, resolve); }) ); filePromises.push(promise); allFilePromises.push(promise); }); Promise.all(filePromises).then((buffers) => { source.buffers = buffers; }); }); return Promise.all(allFilePromises); },
+            pauseAll() { this.ctx.suspend(); }, resumeAll() { this.playSound("lift", 0); setTimeout(() => { this.ctx.resume(); }, 250); }, _lastSmallBurstTime: 0,
+            playSound(type, scale = 1) { scale = MyMath.clamp(scale, 0, 1); if (!store.state.soundEnabled || simSpeed < 0.95) return; if (type === "burstSmall") { const now = Date.now(); if (now - this._lastSmallBurstTime < 20) return; this._lastSmallBurstTime = now; } const source = this.sources[type]; if (!source) throw new Error(`Sound of type "${type}" doesn't exist.`); const initialVolume = source.volume; const initialPlaybackRate = MyMath.random( source.playbackRateMin, source.playbackRateMax ); const scaledVolume = initialVolume * scale; const scaledPlaybackRate = initialPlaybackRate * (2 - scale); const gainNode = this.ctx.createGain(); gainNode.gain.value = scaledVolume; const buffer = MyMath.randomChoice(source.buffers); const bufferSource = this.ctx.createBufferSource(); bufferSource.playbackRate.value = scaledPlaybackRate; bufferSource.buffer = buffer; bufferSource.connect(gainNode); gainNode.connect(this.ctx.destination); bufferSource.start(0); },
+        };
+
+        function handleResize() {
+            const w = window.innerWidth; const h = window.innerHeight;
+            const containerW = Math.min(w, MAX_WIDTH); const containerH = w <= 420 ? h : Math.min(h, MAX_HEIGHT);
+            stages.forEach(stage => stage.resize(containerW, containerH));
+            const scaleFactor = +store.state.config.scaleFactor;
+            stageW = containerW / scaleFactor; stageH = containerH / scaleFactor;
+        }
+        window.addEventListener("resize", handleResize);
+
+        // ==========================================
+        // --- DRONE LOGIC ---
+        // ==========================================
+        
+        const droneCanvas = document.getElementById('drone-canvas');
+        const droneCtx = droneCanvas.getContext('2d');
+        let droneW, droneH; 
+        const r = (min, max) => Math.random() * (max - min) + min;
+        function resizeDroneCanvas() { droneW = droneCanvas.width = window.innerWidth; droneH = droneCanvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeDroneCanvas); 
+        resizeDroneCanvas();
+
         const PHY = { g: 0.05, drag: 0.96 };
         let rockets = [], particles = [], fountains = [], drones = [];
         let showState = 'IDLE';
 
-        class Particle {
-            constructor(x, y, hue, vx, vy, type, generation = 1) {
-                this.x = x; this.y = y; this.hue = hue;
-                this.vx = vx; this.vy = vy;
-                this.type = type || 'spark';
-                this.generation = generation;
-                this.alpha = 1;
-                this.life = r(100, 200);
-                this.decay = type === 'sub_shell' ? r(0.005, 0.01) : r(0.008, 0.015);
-                
-                if (this.type === 'smoke') { 
-                    this.life = r(30, 60); this.decay = r(0.01, 0.03); this.size = r(2, 5); 
-                } 
-                if (this.type === 'sub_shell') {
-                    this.vy += 1; 
-                }
-            }
-
-            update() {
-                this.vx *= PHY.drag; this.vy *= PHY.drag; 
-                if (this.type === 'smoke') { 
-                    this.vy -= 0.02; this.x += Math.sin(this.life * 0.1) * 0.5; this.size *= 1.02; 
-                } 
-                else { this.vy += PHY.g; }
-                
-                this.x += this.vx; this.y += this.vy;
-                this.alpha -= this.decay;
-                
-                if(this.type === 'spark' && Math.random() < 0.1) this.alpha = Math.random(); 
-                
-                if (this.type === 'sub_shell' && this.life <= 0) { 
-                    this.explodeSecondTime(); 
-                    this.alpha = 0; 
-                }
-                this.life--;
-            }
-
-            draw(ctx) {
-                if (this.alpha <= 0) return;
-                ctx.save(); ctx.globalAlpha = this.alpha;
-                if (this.type === 'smoke') {
-                    ctx.fillStyle = `rgba(150, 150, 150, ${this.alpha})`;
-                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
-                } else {
-                    ctx.globalCompositeOperation = 'lighter';
-                    ctx.fillStyle = `hsla(${this.hue}, 100%, 60%, ${this.alpha})`;
-                    let size = (this.type === 'core' ? 3 : (this.type==='sub_shell'? 3 : 1.5));
-                    ctx.beginPath(); ctx.arc(this.x, this.y, size, 0, Math.PI * 2); ctx.fill();
-                }
-                ctx.restore();
-            }
-
-            explodeSecondTime() {
-                if(Math.random() < 0.5) AudioSys.play('crackle');
-                const count = r(20, 30); 
-                for (let i = 0; i < count; i++) {
-                    const angle = r(0, Math.PI * 2); 
-                    const speed = r(1, 5);
-                    const newHue = (Math.random() < 0.5) ? this.hue : r(0, 360);
-                    particles.push(new Particle(this.x, this.y, newHue, Math.cos(angle)*speed, Math.sin(angle)*speed, 'spark', this.generation + 1));
-                }
-            }
-        }
-
-        class Rocket {
-            constructor(x, targetY) {
-                this.x = x; this.y = h; this.targetY = targetY;
-                this.vx = 0; this.vy = -Math.sqrt(2 * PHY.g * (h - targetY)); 
-                this.hue = r(0, 360);
-                AudioSys.play('launch');
-            }
-            update() {
-                this.x += this.vx; this.y += this.vy; this.vy += PHY.g;
-                if (this.vy >= 0) { this.explode(); return false; }
-                return true;
-            }
-            draw(ctx) {
-                ctx.save(); ctx.strokeStyle = `hsl(${this.hue}, 100%, 50%)`; ctx.lineWidth = 2; 
-                ctx.beginPath(); ctx.moveTo(this.x, this.y); ctx.lineTo(this.x, this.y + 15); ctx.stroke(); ctx.restore();
-            }
-            explode() {
-                AudioSys.play('boom');
-                const shapeType = Math.random();
-                const cx = this.x; const cy = this.y; const hue = this.hue;
-                
-                for(let k=0; k<15; k++) particles.push(new Particle(cx, cy, 0, r(-2,2), r(-2,2), 'smoke'));
-
-                if (shapeType < 0.4) { 
-                    for (let i = 0; i < 40; i++) {
-                        const angle = r(0, Math.PI * 2); const speed = r(3, 8);
-                        const p = new Particle(cx, cy, hue, Math.cos(angle)*speed, Math.sin(angle)*speed, 'sub_shell');
-                        p.life = r(30, 50); 
-                        particles.push(p);
-                    }
-                    for (let i = 0; i < 20; i++) {
-                        const angle = r(0, Math.PI * 2); const speed = r(1, 4);
-                        particles.push(new Particle(cx, cy, hue, Math.cos(angle)*speed, Math.sin(angle)*speed, 'core'));
-                    }
-                }
-                else if (shapeType < 0.6) { 
-                    const points = 5; const steps = points * 2;
-                    for (let i = 0; i < 60; i++) {
-                        const angle = (Math.PI * 2 / steps) * (i % steps); 
-                        const isOuter = (i % 2 === 0);
-                        const v = (isOuter ? 6 : 3) + r(-0.5, 0.5); 
-                        particles.push(new Particle(cx, cy, hue, Math.cos(angle - Math.PI/2) * v, Math.sin(angle - Math.PI/2) * v, 'core'));
-                    }
-                }
-                else { 
-                    for (let i = 0; i < 100; i++) {
-                        const angle = r(0, Math.PI * 2); const speed = r(1, 8);
-                        particles.push(new Particle(cx, cy, hue, Math.cos(angle)*speed, Math.sin(angle)*speed, 'spark'));
-                    }
-                }
-            }
-        }
-
-        class Fountain {
-            constructor(x) { this.x = x; this.y = h; this.timer = 0; }
-            update() {
-                this.timer++;
-                if (this.timer % 3 === 0) {
-                    const angle = -Math.PI/2 + (Math.random() - 0.5) * 0.4;
-                    const speed = r(8, 14);
-                    const c = 40 + Math.random()*20; 
-                    particles.push(new Particle(this.x, this.y, c, Math.cos(angle)*speed*0.5, Math.sin(angle)*speed, 'spark'));
-                }
-            }
-        }
-
         class Drone {
             constructor() {
-                this.x = Math.random() * w; this.y = Math.random() * h;
+                this.x = Math.random() * droneW; this.y = Math.random() * droneH;
                 this.tx = this.x; this.ty = this.y;
                 this.color = '#fff';
             }
@@ -712,7 +962,7 @@
                     } else {
                         c = colorMode;
                     }
-                    points.push({x: (x - 300) * scale + w/2, y: (y - tCanvas.height/2) * scale + h/2, c: c});
+                    points.push({x: (x - 300) * scale + droneW/2, y: (y - tCanvas.height/2) * scale + droneH/2, c: c});
                 }
             }
             return points;
@@ -723,7 +973,7 @@
             for (let t = 0; t < Math.PI * 2; t += 0.05) {
                 let x = 16 * Math.pow(Math.sin(t), 3);
                 let y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
-                points.push({ x: x * 15 + w/2, y: y * 15 + h/2 - 50, c: '#ff0055' });
+                points.push({ x: x * 15 + droneW/2, y: y * 15 + droneH/2 - 50, c: '#ff0055' });
             }
             return points;
         }
@@ -732,13 +982,13 @@
             let points = [];
             for(let i=0; i<100; i++) {
                 let t = i/100;
-                let x = (1-t)*(1-t)*(w*0.3) + 2*(1-t)*t*(w*0.5) + t*t*(w*0.8);
-                let y = (1-t)*(1-t)*(h*0.8) + 2*(1-t)*t*(h*0.7) + t*t*(h*0.3);
+                let x = (1-t)*(1-t)*(droneW*0.3) + 2*(1-t)*t*(droneW*0.5) + t*t*(droneW*0.8);
+                let y = (1-t)*(1-t)*(droneH*0.8) + 2*(1-t)*t*(droneH*0.7) + t*t*(droneH*0.3);
                 points.push({x: x, y: y, c: '#5d4037'});
             }
             const flowers = [ {x: 0.35, y: 0.75}, {x: 0.5, y: 0.6}, {x: 0.65, y: 0.45}, {x: 0.75, y: 0.35}, {x: 0.55, y: 0.5} ];
             flowers.forEach(fl => {
-                let cx = w * fl.x; let cy = h * fl.y;
+                let cx = droneW * fl.x; let cy = droneH * fl.y;
                 for(let j=0; j<5; j++) {
                     let angle = (Math.PI*2/5)*j;
                     let petalX = cx + Math.cos(angle)*15;
@@ -785,49 +1035,19 @@
             setTimeout(() => icon.remove(), 3000);
         }
 
-        // --- MAIN LOOP ---
-        let startTime = 0;
-        let lastRocketTime = 0;
-        let salvoCount = 0;
-        let lastSalvoTime = 0;
+        // --- MAIN DRONE LOOP ---
+        function droneLoop() {
+            if(showState === 'ENDED') return;
+            requestAnimationFrame(droneLoop);
+            
+            droneCtx.clearRect(0, 0, droneW, droneH);
 
-        function loop() {
-            requestAnimationFrame(loop);
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; ctx.fillRect(0, 0, w, h);
-
-            if (showState === 'FIREWORKS') {
-                const now = Date.now();
-                const elapsed = now - startTime;
-
-                if (fountains.length === 0) fountains.push(new Fountain(50), new Fountain(w - 50));
-                fountains.forEach(f => f.update());
-
-                if (salvoCount < 3) {
-                    if (now - lastSalvoTime > 2000) { 
-                        rockets.push(new Rocket(w * 0.2, h * 0.2));
-                        rockets.push(new Rocket(w * 0.5, h * 0.2));
-                        rockets.push(new Rocket(w * 0.8, h * 0.2));
-                        salvoCount++;
-                        lastSalvoTime = now;
-                    }
-                }
-                else if (elapsed < 30000) {
-                    if (now - lastRocketTime > 500) {
-                        rockets.push(new Rocket(Math.random() * w, h*0.1 + Math.random()*h*0.4));
-                        lastRocketTime = now;
-                    }
-                }
-                else {
-                    showState = 'DRONE_1';
-                    fountains = [];
-                }
-            }
-            else if (showState === 'DRONE_1') {
-                formShape(getPointsFromMultiLineText(["HAPPY", "NEW YEAR"], (w<500?0.6:1.2), "rainbow"));
+            if (showState === 'DRONE_1') {
+                formShape(getPointsFromMultiLineText(["HAPPY", "NEW YEAR"], (droneW<500?0.6:1.2), "rainbow"));
                 setTimeout(() => { if(showState === 'DRONE_1') showState = 'DRONE_2'; }, 5000);
             }
             else if (showState === 'DRONE_2') {
-                formShape(getPointsFromMultiLineText(["QUỲNH"], (w<500?1.0:2.0), "love"));
+                formShape(getPointsFromMultiLineText(["QUỲNH"], (droneW<500?1.0:2.0), "love"));
                 if(Math.random() < 0.4) spawnIconsAroundCenter(); 
                 setTimeout(() => { if(showState === 'DRONE_2') showState = 'DRONE_3'; }, 6000);
             }
@@ -837,22 +1057,33 @@
             }
             else if (showState === 'DRONE_4') {
                 formShape(getHeartPoints());
+                // Hiện nút lì xì
                 document.getElementById('lixi-btn').style.display = 'block';
             }
 
-            rockets = rockets.filter(r => { r.draw(ctx); return r.update(); });
-            particles = particles.filter(p => { p.draw(ctx); p.update(); return p.life > 0; });
-            drones.forEach(d => { d.update(); d.draw(ctx); });
+            drones.forEach(d => { d.update(); d.draw(droneCtx); });
         }
 
+
+        // --- KÍCH HOẠT PHÁO HOA ---
         function startFireworksShow() {
-            calContainer.style.display = 'none';
-            startTime = Date.now();
-            showState = 'FIREWORKS';
-            loop();
+            handleResize();
+            if (soundManager && soundManager.preload) {
+                soundManager.preload().then(() => {}, (e) => {});
+            }
+            
+            store.setState({ 
+                paused: false,
+                config: {
+                    ...store.state.config,
+                    autoLaunch: true 
+                }
+            });
+
+            showState = 'IDLE'; 
         }
 
-        // --- INTERACTION ---
+        // --- INTERACTION (LÌ XÌ & THƯ) ---
         const btnLixi = document.getElementById('lixi-btn');
         const overlay = document.getElementById('lixi-overlay');
         const envContainer = document.getElementById('env-container');
@@ -863,348 +1094,177 @@
 
         btnLixi.addEventListener('click', () => {
             btnLixi.style.display = 'none'; 
-            overlay.style.display = 'flex';
-            overlay.style.background = 'rgba(0,0,0,0.4)';
-            overlay.style.backdropFilter = 'blur(0px)';
-
+            overlay.style.display = 'flex'; overlay.style.background = 'rgba(0,0,0,0.4)'; overlay.style.backdropFilter = 'blur(0px)';
             envContainer.innerHTML = '';
-            
             for(let i=1; i <= LETTERS.length; i++) {
                 const envWrapper = document.createElement('div');
                 envWrapper.className = 'envelope-wrapper';
                 envWrapper.style.animation = `flyIn 1s ease forwards ${i*0.15}s`;
-                
-                envWrapper.innerHTML = `
-                    <div class="env-flap"></div>
-                    <div class="env-paper">✉️ Surprise!</div>
-                    <div class="env-body"><div class="coin-deco">Phúc</div></div>
-                `;
-
+                envWrapper.innerHTML = `<div class="env-flap"></div><div class="env-paper">✉️ Surprise!</div><div class="env-body"><div class="coin-deco">Phúc</div></div>`;
                 envWrapper.onclick = () => openEnvelope(i-1, envWrapper);
                 envContainer.appendChild(envWrapper);
             }
         });
 
         function openEnvelope(index, el) {
-            currentEnvelopeEl = el;
-            el.classList.add('active'); 
-            
-            overlay.style.backdropFilter = "blur(8px)";
-            overlay.style.background = "rgba(0,0,0,0.6)";
-
+            currentEnvelopeEl = el; el.classList.add('active'); 
+            overlay.style.backdropFilter = "blur(8px)"; overlay.style.background = "rgba(0,0,0,0.6)";
             setTimeout(() => {
                 letterContent.innerHTML = LETTERS[index];
-                letterModal.classList.add('show-flip'); 
-                el.style.opacity = '0'; 
+                letterModal.classList.add('show-flip'); el.style.opacity = '0'; 
             }, 900); 
-            
             openedCount++;
         }
 
         function closeLetter() {
             letterModal.classList.remove('show-flip');
-            overlay.style.backdropFilter = "blur(0px)";
-            overlay.style.background = "rgba(0,0,0,0.4)";
-
-            if(currentEnvelopeEl) {
-                currentEnvelopeEl.style.display = 'none'; 
-            }
-
+            overlay.style.backdropFilter = "blur(0px)"; overlay.style.background = "rgba(0,0,0,0.4)";
+            if(currentEnvelopeEl) currentEnvelopeEl.style.display = 'none'; 
             if (openedCount === LETTERS.length) setTimeout(showFinalScene, 1000);
         }
 
         function showFinalScene() {
-            overlay.style.display = 'none';
-            document.getElementById('canvas-container').style.display = 'none'; 
-            btnLixi.style.display = 'none';
+            overlay.style.display = 'none'; btnLixi.style.display = 'none';
             
+            store.setState({ paused: true });
             showState = 'ENDED';
+            document.querySelector('.canvas-container').style.display = 'none';
 
             document.body.style.background = "radial-gradient(circle, #5e0000, #1a0000)";
-
             document.getElementById('final-screen').style.display = 'flex';
             
             const finalTextContainer = document.querySelector('.final-text');
-            let htmlContent = finalTextContainer.innerHTML;
-            let parts = htmlContent.split('<br>');
-            let textToWave = parts[0]; 
-
+            let htmlContent = finalTextContainer.innerHTML; let parts = htmlContent.split('<br>'); let textToWave = parts[0]; 
             let wavedText = textToWave.split('').map((char, index) => {
                 if (char === ' ') return ' '; 
-                let delay = index * 0.1; 
-                return `<span class="wavy-char" style="animation-delay: ${delay}s">${char}</span>`;
+                return `<span class="wavy-char" style="animation-delay: ${index * 0.1}s">${char}</span>`;
             }).join('');
-
             finalTextContainer.innerHTML = wavedText + '<br>' + parts[1];
 
             setTimeout(() => {
-                const loveMsg = document.getElementById('love-message');
-                loveMsg.classList.add('show-love');
+                document.getElementById('love-message').classList.add('show-love');
                 spawnLoveConfetti();
             }, 2500);
             
-            // SAU 5 GIÂY HIỆN NÚT
-            setTimeout(() => {
-                const btn = document.getElementById('redirect-btn');
-                btn.classList.add('show-btn');
-            }, 5000);
+            setTimeout(() => { document.getElementById('redirect-btn').classList.add('show-btn'); }, 5000);
 
             const icons = ['🌸', '✨', '🍀', '❤️', '🥰', '🦋', '🎁', '💖', '🌟'];
             const fs = document.getElementById('final-screen');
-            
             setInterval(() => {
-                const ic = document.createElement('div'); 
-                ic.className = 'final-icon';
+                const ic = document.createElement('div'); ic.className = 'final-icon';
                 ic.innerText = icons[Math.floor(Math.random()*icons.length)];
-                ic.style.left = Math.random()*100 + '%'; 
-                ic.style.top = (Math.random()*40 + 60) + '%'; 
+                ic.style.left = Math.random()*100 + '%'; ic.style.top = (Math.random()*40 + 60) + '%'; 
                 ic.style.animationDuration = (Math.random()*3 + 3) + 's';
-                fs.appendChild(ic); 
-                setTimeout(() => ic.remove(), 6000);
+                fs.appendChild(ic); setTimeout(() => ic.remove(), 6000);
             }, 200);
         }
         
         function spawnLoveConfetti() {
             for(let i=0; i<20; i++){
                 setTimeout(() => {
-                    const ic = document.createElement('div'); 
-                    ic.className = 'final-icon';
-                    ic.innerText = '❤️';
-                    ic.style.left = (40 + Math.random()*20) + '%'; 
-                    ic.style.top = '60%'; 
+                    const ic = document.createElement('div'); ic.className = 'final-icon'; ic.innerText = '❤️';
+                    ic.style.left = (40 + Math.random()*20) + '%'; ic.style.top = '60%'; 
                     ic.style.animationDuration = (2 + Math.random()) + 's';
                     document.getElementById('final-screen').appendChild(ic);
                 }, i * 100);
             }
         }
 
-        // --- LOGIC CHUYỂN TRANG & VẼ TRÁI TIM MỰC ---
-        
-        // ==========================================
-        // PHẦN NỘI DUNG 3 TRANG GIẤY
-        // ==========================================
-        const PAGE_CONTENT_1 = "Nhanh thật nhỉ, mới đó mà tụi mình đã đi được nửa chặng đường cuối cấp rồi. Có những ngày mọi thứ diễn ra rất bình thường, nhưng khi nhìn lại thì lại thấy đáng nhớ hơn mình tưởng. Tớ thấy may vì trong quãng thời gian này có cậu ở đó, không cần làm gì lớn lao, chỉ cần cùng đi qua những ngày đến lớp, cùng cười vài chuyện vu vơ cũng đủ thấy ấm. Phần đường phía trước vẫn còn, tớ chỉ mong tụi mình cứ giữ nhịp này, chậm thôi, nhưng thật, để sau này khi nhớ lại, mình có thể mỉm cười vì đã từng có một quãng thời gian rất đẹp bên nhau. Cho dù đôi lúc mình vụng về, không biết nói sao cho đúng, không giỏi thể hiện cảm xúc hay giữ mọi thứ thật hoàn hảo, nhưng tớ nghĩ điều quan trọng là sự chân thành mình dành cho nhau vẫn luôn ở đó. Có thể sẽ có những lúc hiểu lầm, những lúc im lặng, nhưng tớ tin rằng chỉ cần còn quan tâm, còn muốn ở lại, thì những điều chưa trọn vẹn cũng sẽ trở thành một phần rất đẹp của quãng thời gian này. Tớ trân trọng cách tụi mình đã và đang đồng hành, dù không hoàn hảo, nhưng rất thật.";
-        
-        const PAGE_CONTENT_2 = "Cũng chả biết từ khi nào nữa, Hải đã thích Quỳnh. Không phải kiểu rung động ồn ào hay một khoảnh khắc rõ ràng để nhớ, chỉ là dần dần thấy Quỳnh quan trọng hơn, để ý nhiều hơn những điều rất nhỏ. Có lúc Hải cũng vụng về, không biết nói sao cho đúng, nên chọn cách im lặng và ở cạnh theo cách an toàn nhất. Thích Quỳnh theo cách nhẹ nhàng, không đòi hỏi, không mong phải được đáp lại ngay, chỉ mong trong quãng thời gian mình còn đi chung nửa chặng đường này, mọi thứ vẫn giữ được sự ấm áp và chân thành như bây giờ. Nếu sau này có lúc nhìn lại, Hải chỉ hy vọng Quỳnh nhớ rằng đã từng có một người thương Quỳnh rất thật, theo cách chậm và hiền như thế.Rồi từ lúc nào đó, cảm giác ấy không còn là thích nữa, mà chậm rãi thành yêu, rồi dần thành thương. Thương theo cách rất hiền, không ồn ào, chỉ là muốn ở bên cạnh Quỳnh lâu hơn một chút, muốn cùng đi qua thêm nhiều ngày bình thường như thế này. Có những lúc Hải không nói gì, không làm gì đặc biệt, nhưng trong lòng luôn nghĩ nếu được ở cạnh Quỳnh thêm một đoạn đường nữa thì cũng đã đủ ấm. Không mong hứa hẹn xa xôi, chỉ mong hiện tại này kéo dài hơn một chút, để sự quan tâm, sự chân thành có thêm thời gian mà lớn lên.";
-        
-        const PAGE_CONTENT_3 = "Tớ xin lỗi vì đã chọn cách vòng vo như thế này, xin lỗi vì không đủ dũng khí để nói thẳng với cậu bằng lời của chính mình. Có lẽ vì tớ sợ, sợ rằng chỉ cần nói ra thôi, mối quan hệ mà tớ luôn trân trọng sẽ không còn giữ được sự tự nhiên vốn có. Tớ đã nhiều lần muốn nói, muốn hỏi, muốn bước thêm một chút về phía cậu, nhưng mỗi lần như vậy, tớ lại tự dừng mình lại, vì tớ không muốn trở thành gánh nặng trong cuộc sống của cậu. “In Love” của Low G là những rung động rất thật của tớ, là lúc tớ nhận ra mình quan tâm cậu nhiều hơn một người bạn, là những khoảnh khắc rất nhỏ thôi cũng đủ làm tớ vui, đủ để tớ mong chờ. Còn “Có Đôi Điều” của skiki là phần lặng nhất trong tớ, là những điều tớ cất đi, là sự im lặng kéo dài, là việc tớ chọn ở lại phía sau vì không muốn làm cậu khó xử. Hai bài hát ấy không phải ngẫu nhiên tớ gửi cho cậu, chúng là hai phần cảm xúc trong cùng một con người, vừa yêu thương, vừa sợ hãi, vừa muốn nói ra, vừa không dám đánh mất. Nếu có lúc nào đó cậu nghe và thấy lòng mình chùng xuống, mong cậu hiểu rằng đã từng có một người thương cậu rất nhiều, thương theo cách vụng về, lặng lẽ, không cần được đáp lại, chỉ mong cậu luôn bình yên, dù sau này người ở cạnh cậu có là ai đi nữa.";
-        
-        const FINAL_SIGNATURE = "- From Hải with love -";
-        
-        const DIARY_PAGES = [PAGE_CONTENT_1, PAGE_CONTENT_2, PAGE_CONTENT_3];
-        let currentPageIndex = 0;
-
+        // --- XỬ LÝ CHUYỂN TRANG CUỐI CÙNG (SỔ TAY) ---
         function goToNextPage() {
             document.getElementById('final-screen').style.display = 'none';
             const customPage = document.getElementById('my-custom-page');
-            customPage.style.display = 'flex';
             
-            showState = 'IDLE'; 
-            setTimeout(initInkHeart, 500);
+            // Hiện block
+            customPage.style.display = 'block';
+
+            // Xoá transition cũ để tránh xung đột opacity
+            // và hiện trang ngay lập tức
+            customPage.style.opacity = '1';
+            
+            // Đợi 1 chút để DOM cập nhật rồi mới vẽ
+            setTimeout(initCustomCanvas, 50);
         }
 
-        // --- 1. VẼ TRÁI TIM BAN ĐẦU ---
-        function initInkHeart() {
-            const c = document.getElementById('heart-canvas');
-            const ctx = c.getContext('2d');
-            
-            c.width = window.innerWidth;
-            c.height = window.innerHeight;
-            
-            const cx = c.width / 2;
-            const cy = c.height / 2;
-            
-            let t = 0;
-            const speed = 0.025; 
-            const scale = Math.min(c.width, c.height) / 35; 
-            
-            function getHeartXY(val) {
-                let x = 16 * Math.pow(Math.sin(val), 3);
-                let y = -(13 * Math.cos(val) - 5 * Math.cos(2*val) - 2 * Math.cos(3*val) - Math.cos(4*val));
-                return { x: cx + x * scale, y: cy + y * scale };
+        function initCustomCanvas() {
+            const canvas = document.getElementById('final-custom-canvas');
+            const ctx = canvas.getContext('2d');
+            let w, h;
+
+            function resize() {
+                // Lấy kích thước thật của cửa sổ
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
             }
+            // Gọi resize ngay để lấy kích thước
+            resize(); 
+            window.addEventListener('resize', resize);
 
-            function draw() {
-                if (t > Math.PI * 2) {
-                    c.classList.add('fade-out'); // Biến mất trái tim
-                    setTimeout(() => {
-                         ctx.clearRect(0, 0, c.width, c.height);
-                         c.classList.remove('fade-out'); 
-                         // Bắt đầu vào Trang 1
-                         currentPageIndex = 0;
-                         renderDiaryPage(currentPageIndex);
-                    }, 1500);
-                    return; 
-                }
+            // Cấu hình vẽ
+            const lineHeight = 40; 
+            const marginTop = 60;
+            const holeX = 40;     // Vị trí x của lỗ đục
+            const holeW = 15;     // Chiều rộng lỗ
+            const holeH = 20;     // Chiều cao lỗ
+            const lineStartX = 80;// Dòng kẻ bắt đầu từ đâu
+            
+            // Màu sắc
+            const paperColor = '#f8f8f8'; // Màu giấy (trùng background css)
+            const holeColor = '#333';     // Màu lỗ đục
+            const lineColor = '#000';     // Màu dòng kẻ ĐEN
 
-                for (let i = 0; i < 3; i++) { 
-                    t += speed / 5;
-                    if (t > Math.PI * 2) break;
-                    const point = getHeartXY(t);
-                    const radius = (Math.random() * 10 + 5) * (1 + Math.sin(t * 5) * 0.2); 
-                    ctx.globalAlpha = Math.random() * 0.3 + 0.1; 
-                    ctx.fillStyle = `hsl(${350 + Math.random()*20}, 80%, ${40 + Math.random()*20}%)`;
+            let currentLine = 0;
+            let maxLines = 0;
+
+            function drawFrame() {
+                // Tính số dòng tối đa dựa trên chiều cao màn hình
+                maxLines = Math.floor((h - marginTop) / lineHeight);
+
+                // 1. Xóa toàn bộ canvas và vẽ nền trắng
+                ctx.clearRect(0, 0, w, h);
+                ctx.fillStyle = paperColor;
+                ctx.fillRect(0, 0, w, h);
+
+                // 2. Vẽ hàng lỗ lò xo bên trái (luôn vẽ hết)
+                ctx.fillStyle = holeColor;
+                for (let y = marginTop - 10; y < h; y += lineHeight) {
+                    // Vẽ lỗ đục hình chữ nhật bo góc nhẹ
                     ctx.beginPath();
-                    ctx.arc(point.x + (Math.random()-0.5)*5, point.y + (Math.random()-0.5)*5, radius, 0, Math.PI * 2);
+                    ctx.roundRect(holeX, y, holeW, holeH, 2);
                     ctx.fill();
                 }
-                requestAnimationFrame(draw);
-            }
-            draw();
-        }
 
-        // --- 2. HÀM XỬ LÝ CHUYỂN TRANG ---
-        function nextDiaryPage() {
-            // Ẩn nút
-            document.getElementById('next-page-btn').style.display = 'none';
-            currentPageIndex++;
-            
-            const c = document.getElementById('heart-canvas');
-            // Hiệu ứng mờ đi để chuyển trang
-            c.style.opacity = 0;
-            
-            setTimeout(() => {
-                const ctx = c.getContext('2d');
-                ctx.clearRect(0, 0, c.width, c.height); // Xóa trắng
-                renderDiaryPage(currentPageIndex); // Vẽ trang mới
-                c.style.opacity = 1; // Hiện lại
-            }, 500);
-        }
-
-        // --- 3. HỆ THỐNG KẺ DÒNG & VIẾT CHỮ (ĐƯỢC GỌI MỖI TRANG) ---
-        function renderDiaryPage(pageIndex) {
-            const c = document.getElementById('heart-canvas');
-            const ctx = c.getContext('2d');
-            const cW = c.width; 
-            const cH = c.height;
-
-            const lineHeight = 50; 
-            const startY = cH * 0.15; 
-            const maxWidth = cW * 0.9;
-            const startX = (cW - maxWidth) / 2;
-            const endX = startX + maxWidth;
-            
-            const numLines = Math.floor((cH * 0.7) / lineHeight);
-            
-            // A. VẼ DÒNG KẺ
-            let currentLineIndex = 0;
-            let currentLineX = startX;
-            const lineDrawSpeed = 25; // Tăng tốc độ kẻ dòng một chút
-
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = "rgba(50, 50, 50, 0.2)"; 
-            ctx.lineCap = "round";
-
-            function animateLines() {
-                if (currentLineIndex >= numLines) {
-                    // Kẻ xong dòng thì viết chữ tương ứng với pageIndex
-                    setTimeout(() => startWritingText(ctx, startX, endX, startY, lineHeight, DIARY_PAGES[pageIndex]), 300);
-                    return;
-                }
-
+                // 3. Vẽ các dòng kẻ ngang (xuất hiện dần dần)
+                ctx.strokeStyle = lineColor;
+                ctx.lineWidth = 1.5;
                 ctx.beginPath();
-                ctx.moveTo(currentLineX, startY + currentLineIndex * lineHeight);
-                currentLineX += lineDrawSpeed;
-                
-                if (currentLineX < endX) {
-                     ctx.lineTo(currentLineX, startY + currentLineIndex * lineHeight);
-                     ctx.stroke();
-                     requestAnimationFrame(animateLines);
-                } else {
-                    ctx.lineTo(endX, startY + currentLineIndex * lineHeight);
-                    ctx.stroke();
-                    currentLineIndex++;
-                    currentLineX = startX;
-                    requestAnimationFrame(animateLines);
+
+                for (let i = 0; i < currentLine; i++) {
+                    const y = marginTop + i * lineHeight + (holeH/2); 
+                    // Vẽ đường kẻ
+                    ctx.moveTo(lineStartX, y);
+                    ctx.lineTo(w - 20, y);
+                }
+                ctx.stroke();
+
+                // 4. Vẽ tiêu đề (chỉ hiện khi đã vẽ được vài dòng)
+                if (currentLine > 2) {
+                    ctx.font = "bold 30px 'Patrick Hand', cursive"; // Font chữ tay
+                    ctx.fillStyle = "#333";
+                    ctx.fillText("Nhật ký 2026...", lineStartX, marginTop - 15);
+                }
+
+                // Tăng biến đếm để tạo animation
+                if (currentLine < maxLines + 5) {
+                    currentLine += 0.25; // Tốc độ xuất hiện
+                    requestAnimationFrame(drawFrame);
                 }
             }
-            animateLines();
+
+            // Bắt đầu vẽ
+            drawFrame();
         }
 
-        function startWritingText(ctx, startX, endX, startY, lineHeight, textContent) {
-            const fontSize = Math.min(30, window.innerWidth / 15);
-            ctx.font = `${fontSize}px 'Patrick Hand', cursive`;
-            ctx.fillStyle = "#2c3e50";
-            ctx.textBaseline = "bottom";
-
-            // Tách chữ để xuống dòng
-            const words = textContent.split(' ');
-            let lines = [];
-            let currentLine = words[0];
-
-            for (let i = 1; i < words.length; i++) {
-                let word = words[i];
-                let width = ctx.measureText(currentLine + " " + word).width;
-                if (width < (endX - startX)) {
-                    currentLine += " " + word;
-                } else {
-                    lines.push(currentLine);
-                    currentLine = word;
-                }
-            }
-            lines.push(currentLine);
-
-            // Bắt đầu gõ
-            let lineIdx = 0;
-            let charIdx = 0;
-            let cursorX = startX;
-            let cursorY = startY + lineHeight;
-
-            function typeWriter() {
-                if (lineIdx < lines.length) {
-                    const currentString = lines[lineIdx];
-                    if (charIdx < currentString.length) {
-                        const char = currentString[charIdx];
-                        ctx.fillText(char, cursorX, cursorY - 5);
-                        cursorX += ctx.measureText(char).width;
-                        charIdx++;
-                        setTimeout(typeWriter, Math.random() * 30 + 30); // Tốc độ gõ
-                    } else {
-                        lineIdx++;
-                        charIdx = 0;
-                        cursorX = startX;
-                        cursorY += lineHeight;
-                        setTimeout(typeWriter, 300);
-                    }
-                } else {
-                    // KHI VIẾT XONG TRANG NÀY
-                    handlePageFinished(ctx, startX, endX, cursorY, lineHeight, fontSize);
-                }
-            }
-            typeWriter();
-        }
-
-        function handlePageFinished(ctx, startX, endX, lastY, lineHeight, fontSize) {
-            // Kiểm tra xem còn trang không
-            if (currentPageIndex < DIARY_PAGES.length - 1) {
-                // Chưa hết -> Hiện nút chuyển trang
-                const btn = document.getElementById('next-page-btn');
-                btn.style.display = 'block';
-                btn.classList.add('pulse-btn'); 
-            } else {
-                // Đã là trang cuối -> Ký tên
-                setTimeout(() => drawSignature(ctx, startX, endX, lastY, lineHeight, fontSize), 500);
-            }
-        }
-
-        function drawSignature(ctx, startX, endX, lastY, lineHeight, fontSize) {
-            ctx.font = `${fontSize * 1.5}px 'Dancing Script', cursive`;
-            ctx.fillStyle = "#c0392b";
-            const sigWidth = ctx.measureText(FINAL_SIGNATURE).width;
-            let sigX = (startX + endX) / 2 - sigWidth / 2;
-            let sigY = lastY + lineHeight * 2;
-            
-            let sIdx = 0;
-            function typeSig() {
-                if (sIdx < FINAL_SIGNATURE.length) {
-                    ctx.fillText(FINAL_SIGNATURE[sIdx], sigX, sigY);
-                    sigX += ctx.measureText(FINAL_SIGNATURE[sIdx]).width;
-                    sIdx++;
-                    setTimeout(typeSig, 70);
-                }
-            }
-            typeSig();
-        }
     </script>
 </body>
 </html>
